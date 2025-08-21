@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('video_quizes', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('videos')->onDelete('cascade')->onUpdate('cascade');
+            $table->integer('quize_number')->default(1);
+            $table->foreignId('video_id')->constrained('videos')->onDelete('cascade')->onUpdate('cascade');
             $table->integer('start');
             $table->integer('end');
             $table->integer('questionType');

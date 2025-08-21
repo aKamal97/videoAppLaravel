@@ -1,0 +1,65 @@
+<?php
+
+namespace Modules\Video\App\Http\Controllers;
+
+use App\Http\Controllers\Controller;
+use GuzzleHttp\Promise\Create;
+use Illuminate\Http\Request;
+use Modules\Video\App\Http\Requests\CreateVideoRequest;
+use Modules\Video\Models\Video;
+
+class VideoController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
+        return $this->success(data:[1,2], statusCode: 200);
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create(CreateVideoRequest $request)
+    {
+        $data = $request->validated();
+        try{
+        $video = Video::create($data);
+        return $this->success(data: $video, statusCode: 201);
+        }catch(\Throwable $e) {
+            return $this->failuer($e->getMessage(), 500);
+        }
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request) {}
+
+    /**
+     * Show the specified resource.
+     */
+    public function show($id)
+    {
+        return view('video::show');
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit($id)
+    {
+        return view('video::edit');
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, $id) {}
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy($id) {}
+}

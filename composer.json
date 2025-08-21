@@ -9,7 +9,8 @@
         "php": "^8.2",
         "laravel/framework": "^11.31",
         "laravel/sanctum": "^4.0",
-        "laravel/tinker": "^2.9"
+        "laravel/tinker": "^2.9",
+        "nwidart/laravel-modules": "^12.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
@@ -24,7 +25,16 @@
         "psr-4": {
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
-            "Database\\Seeders\\": "database/seeders/"
+            "Database\\Seeders\\": "database/seeders/",
+            "Modules\\": "modules/",
+            "Modules\\Video\\Database\\Factories\\":" modules/video/database/factories/",
+            "Modules\\Video\\Database\\Seeders\\": "modules/video/database/seeders/",
+            "Modules\\Video\\": "modules/video/",
+            "Modules\\Video\\app\\": "modules/video/app/",
+            "Modules\\Video\\app\\Providers\\": "modules/video/app/Providers/",
+            "Modules\\Video\\app\\Http\\Controllers\\": "modules/video/app/Http/Controllers/",
+            "Modules\\Video\\app\\Models\\": "modules/video/app/Models/"
+
         }
     },
     "autoload-dev": {
@@ -64,7 +74,8 @@
         "sort-packages": true,
         "allow-plugins": {
             "pestphp/pest-plugin": true,
-            "php-http/discovery": true
+            "php-http/discovery": true,
+            "wikimedia/composer-merge-plugin": true
         }
     },
     "minimum-stability": "stable",
