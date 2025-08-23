@@ -6,10 +6,17 @@ use App\Http\Controllers\Controller;
 use GuzzleHttp\Promise\Create;
 use Illuminate\Http\Request;
 use Modules\Video\App\Http\Requests\CreateVideoRequest;
+use Modules\Video\App\Services\Contract\VideoServiceInterface;
 use Modules\Video\Models\Video;
 
 class VideoController extends Controller
 {
+    protected $videoService;
+
+    public function __construct()
+    {
+        $this->videoService = app(VideoServiceInterface::class);
+    }
     /**
      * Display a listing of the resource.
      */
@@ -25,7 +32,10 @@ class VideoController extends Controller
     {
         $data = $request->validated();
         try{
-        $video = Video::create($data);
+            $video = $this->videoService->create($data);
+            if(!$video) {
+                return $this->failuer('Video not created', 400);
+            }
         return $this->success(data: $video, statusCode: 201);
         }catch(\Throwable $e) {
             return $this->failuer($e->getMessage(), 500);
