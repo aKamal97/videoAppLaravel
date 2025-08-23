@@ -13,7 +13,11 @@ class CreateVideoRequest extends FormRequest
     {
         return [
             'title' => ['required','string','max:255'],
-            'videoUrl'=> ['required','string','url','max:255'],
+            'url'=> ['required','string','url','max:255'],
+            'length' => ['required','integer','min:1'],
+            'time_section_threshold' => ['required','integer','min:1'],
+            'video_sections_bool' => ['required','boolean'],
+
 
         ];
     }

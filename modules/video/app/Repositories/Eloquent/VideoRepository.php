@@ -3,11 +3,12 @@
 namespace Modules\Video\App\Repositories\Eloquent;
 
 use Modules\Video\App\Repositories\Contract\VideoRepositoryInterface;
+use Modules\Video\App\Models\Video;
 
 class VideoRepository implements VideoRepositoryInterface
 {
    private $video ;
-    public function __construct($video)
+    public function __construct(Video $video)
     {
          $this->video = $video;
     }
@@ -23,6 +24,7 @@ class VideoRepository implements VideoRepositoryInterface
     }
     public function create(array $data)
     {
+  
         // Implementation for creating a new video
         return $this->video->create($data);
     }

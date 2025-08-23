@@ -9,11 +9,19 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class VideoSection extends Model
 {
     use HasFactory;
+    protected $table = 'video_sections';
 
     /**
      * The attributes that are mass assignable.
      */
-    protected $fillable = [];
+    protected $fillable = [
+         'id',
+        'video_id',
+        'start_time',
+        'end_time',
+        'title',
+        'section_number',
+    ];
 
     // protected static function newFactory(): VideoSectionFactory
     // {

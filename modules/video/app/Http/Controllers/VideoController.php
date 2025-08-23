@@ -3,11 +3,10 @@
 namespace Modules\Video\App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use GuzzleHttp\Promise\Create;
 use Illuminate\Http\Request;
 use Modules\Video\App\Http\Requests\CreateVideoRequest;
 use Modules\Video\App\Services\Contract\VideoServiceInterface;
-use Modules\Video\Models\Video;
+use Modules\Video\App\Transformers\VideoResource;
 
 class VideoController extends Controller
 {
@@ -22,7 +21,7 @@ class VideoController extends Controller
      */
     public function index()
     {
-        return $this->success(data:[1,2], statusCode: 200);
+        return $this->success(data:VideoResource::collection($this->videoService->getAll()), statusCode: 200);
     }
 
     /**
@@ -36,7 +35,8 @@ class VideoController extends Controller
             if(!$video) {
                 return $this->failuer('Video not created', 400);
             }
-        return $this->success(data: $video, statusCode: 201);
+
+        return $this->success(data: new VideoResource($video), statusCode: 201);
         }catch(\Throwable $e) {
             return $this->failuer($e->getMessage(), 500);
         }
