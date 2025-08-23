@@ -2,13 +2,13 @@
 
 namespace Modules\Video\App\Services\Repositories;
 
-use Modules\Video\App\Repositories\Eloquent\VideoRepository;
+use Modules\Video\App\Repositories\Contract\VideoRepositoryInterface;
 use Modules\Video\App\Services\Contract\VideoServiceInterface;
 
 class VideoServiceRepository implements VideoServiceInterface
 {
     protected $videoRepository;
-    public function __construct(VideoRepository $videoRepository)
+    public function __construct(VideoRepositoryInterface $videoRepository)
     {
         $this->videoRepository = $videoRepository;
     }

@@ -21,6 +21,10 @@ class VideoController extends Controller
      */
     public function index()
     {
+        $videos = $this->videoService->getAll();
+        if($videos->isEmpty()) {
+            return $this->success([], 404);
+        }
         return $this->success(data:VideoResource::collection($this->videoService->getAll()), statusCode: 200);
     }
 

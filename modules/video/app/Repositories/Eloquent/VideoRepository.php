@@ -24,14 +24,14 @@ class VideoRepository implements VideoRepositoryInterface
     }
     public function create(array $data)
     {
-  
+
         // Implementation for creating a new video
         return $this->video->create($data);
     }
     public function update($id, array $data)
     {
         // Implementation for updating a video
-        $video = $this->video->findOrFail($id);
+        $video = $this->video->getById($id);
         if ($video) {
             $video->update($data);
             return $video;
@@ -41,7 +41,7 @@ class VideoRepository implements VideoRepositoryInterface
     public function delete($id)
     {
         // Implementation for deleting a video
-        $video = $this->video->find($id);
+        $video = $this->video->getById($id);
         if ($video) {
             $video->delete();
             return true;

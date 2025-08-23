@@ -3,7 +3,7 @@
 namespace Modules\Video\App\Repositories\Eloquent;
 
 use Modules\Video\App\Repositories\Contract\SectionRepositoryInterface;
-use Modules\Video\Models\VideoSection;
+use Modules\Video\App\Models\VideoSection;
 
 class SectionRepository implements SectionRepositoryInterface
 {
@@ -49,9 +49,14 @@ class SectionRepository implements SectionRepositoryInterface
     {
         return $this->section->where('video_id', $videoId)->get();
     }
-    //get section number by video id
+    // get section number by video id
     public function getSectionNumbersByVideoId($videoId)
     {
         return $this->section->where('video_id', $videoId)->pluck('section_number');
+    }
+    // get max section number by video id
+    public function getMaxSectionNumberByVideoId($videoId)
+    {
+        return $this->section->where('video_id', $videoId)->max('section_number');
     }
 }

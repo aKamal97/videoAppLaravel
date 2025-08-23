@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Video\Models;
+namespace Modules\Video\App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -17,8 +17,8 @@ class VideoSection extends Model
     protected $fillable = [
          'id',
         'video_id',
-        'start_time',
-        'end_time',
+        'start',
+        'end',
         'title',
         'section_number',
     ];
