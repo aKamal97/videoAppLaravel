@@ -1,22 +1,27 @@
 <?php
 
 namespace Modules\Video\Models;
-
+use Modules\Video\App\Models\Video;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-// use Modules\Video\Database\Factories\VideoSubtitlesFactory;
 
 class VideoSubtitles extends Model
 {
-    use HasFactory;
+
+    protected $table = 'video_subtitles';
+
+    protected $fillable = [
+        'subtitle_number',
+        'video_id',
+        'start',
+        'end',
+        'text',
+    ];
 
     /**
-     * The attributes that are mass assignable.
+     * Define relationship with Video model
      */
-    protected $fillable = [];
-
-    // protected static function newFactory(): VideoSubtitlesFactory
-    // {
-    //     // return VideoSubtitlesFactory::new();
-    // }
+    public function video()
+    {
+        return $this->belongsTo(Video::class);
+    }
 }
