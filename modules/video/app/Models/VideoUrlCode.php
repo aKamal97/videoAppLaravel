@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Video\Models;
+namespace Modules\Video\App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -9,11 +9,19 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class VideoUrlCode extends Model
 {
     use HasFactory;
-
+    protected $table = 'video_url_codes';
     /**
      * The attributes that are mass assignable.
      */
-    protected $fillable = [];
+    protected $fillable = [
+        'id',
+        'video_id',
+        'url',
+        'start',
+        'end',
+        'url_number',
+        'isembedcode'
+    ];
 
     // protected static function newFactory(): VideoUrlCodeFactory
     // {

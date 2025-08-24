@@ -8,15 +8,17 @@ use Illuminate\Support\Arr;
 use Modules\Video\App\Services\Contract\SectionServiceInterface;
 use Modules\Video\App\Http\Requests\CreateSectionRequest;
 use Modules\Video\App\Http\Requests\UpdateSection;
+use Modules\Video\App\Services\Contract\VideoServiceInterface;
 use Modules\Video\App\Transformers\SectionResource;
 use Nwidart\Modules\Process\Updater;
 
 class SectionController extends Controller
 {
-    private $sectionService;
+    private $sectionService,$videoService;
     public function __construct()
     {
         $this->sectionService = app(SectionServiceInterface::class);
+        $this->videoService = app(VideoServiceInterface::class);
     }
     /**
      * Display a listing of the resource.
@@ -36,11 +38,17 @@ class SectionController extends Controller
      */
     public function store($videoId, CreateSectionRequest $request)
     {
+
+
+        $video = $this->videoService->getById($videoId);
+        if (!$video) {
+            return $this->failuer('Video not found', 404);
+        }
         $data = $request->validated();
         $sections = [];
         try {
+            $isVideoHasSections = $this->sectionService->getSectionsByVideoId($videoId);
             foreach ($data['sections'] as $sectionData) {
-                $isVideoHasSections = $this->sectionService->getSectionsByVideoId($videoId);
                 if ($isVideoHasSections->isEmpty()) {
                     $sectionData['section_number'] = 1;
                 } else {
@@ -59,9 +67,10 @@ class SectionController extends Controller
                 return $this->failuer('Section not created', 400);
             }
             return $this->success(data: SectionResource::collection($sections), statusCode: 201);
-        } catch (\Throwable $e) {
+        }catch (\Throwable $e) {
             return $this->failuer($e->getMessage(), 500);
-        }
+         }
+
     }
 
 
@@ -71,10 +80,14 @@ class SectionController extends Controller
      */
     public function show($videoId, $sectionId)
     {
+         $video = $this->videoService->getById($videoId);
+        if (!$video) {
+            return $this->failuer('Video not found', 404);
+        }
         try {
             $section = $this->sectionService->getSectionByVideoId($videoId, $sectionId);
             if (!$section) {
-                return $this->failuer('Section not found or video not exist ', 400);
+                return $this->failuer('Section not exist ', 400);
             }
             return $this->success(data: new SectionResource($section), statusCode: 200);
         } catch (\Throwable $e) {
@@ -90,12 +103,15 @@ class SectionController extends Controller
     public function update(UpdateSection $request, $videoId, $sectionId)
     {
         $data = $request->validated();
-
+         $video = $this->videoService->getById($videoId);
+        if (!$video) {
+            return $this->failuer('Video not found', 404);
+        }
         try {
 
             $updatedSection = $this->sectionService->updateSection($videoId, $sectionId, $data);
             if (!$updatedSection) {
-                return $this->failuer('Section not found or video not exist ', 400);
+                return $this->failuer('Section not exist ', 400);
             }
 
             return $this->success(message: "section updated successfully", data: new  SectionResource($updatedSection), statusCode: 200);
@@ -109,10 +125,14 @@ class SectionController extends Controller
      */
     public function destroy($videoId, $sectionId)
     {
+         $video = $this->videoService->getById($videoId);
+        if (!$video) {
+            return $this->failuer('Video not found', 404);
+        }
         try {
             $deleted = $this->sectionService->deleteSection($videoId, $sectionId);
             if (!$deleted) {
-                return $this->failuer('Section not found or video not exist ', 400);
+                return $this->failuer('Section not exist ', 400);
             }
 
             return $this->success(message: 'section deleted successfully',  statusCode: 200);
@@ -126,6 +146,10 @@ class SectionController extends Controller
      */
     public function getSections($videoId)
     {
+         $video = $this->videoService->getById($videoId);
+        if (!$video) {
+            return $this->failuer('Video not found', 404);
+        }
         $sections = $this->sectionService->getSectionsByVideoId($videoId);
         if ($sections->isEmpty()) {
             return $this->success([], 404);
