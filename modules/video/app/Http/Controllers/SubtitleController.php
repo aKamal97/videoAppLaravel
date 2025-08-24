@@ -71,7 +71,11 @@ class SubtitleController extends Controller
      */
     public function show($id)
     {
-        return view('video::show');
+        $subtitle = $this->subtitleService->getSubtitleById($id);
+        if(!$subtitle) {
+            return $this->failuer('Subtitle not found', 404);
+        }
+        return $this->success(new SubtitleResource($subtitle), 200);
     }
 
     /**
