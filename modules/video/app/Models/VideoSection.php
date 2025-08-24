@@ -15,7 +15,7 @@ class VideoSection extends Model
      * The attributes that are mass assignable.
      */
     protected $fillable = [
-         'id',
+        'id',
         'video_id',
         'start',
         'end',
@@ -23,6 +23,10 @@ class VideoSection extends Model
         'section_number',
     ];
 
+    public function video()
+    {
+        return $this->belongsTo(Video::class);
+    }
     // protected static function newFactory(): VideoSectionFactory
     // {
     //     // return VideoSectionFactory::new();

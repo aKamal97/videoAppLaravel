@@ -21,7 +21,10 @@ class Video extends Model
         'time_section_threshold',
         'video_sections_bool',
     ];
-
+    public function sections()
+    {
+        return $this->hasMany(VideoSection::class);
+    }
     // protected static function newFactory(): VideoFactory
     // {
     //     // return VideoFactory::new();
