@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Modules\Video\App\Http\Controllers\VideoController;
 use Modules\Video\App\Http\Controllers\SectionController;
+use Modules\Video\App\Http\Controllers\VideoUrlCodeController;
 
 // Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
 //     Route::apiResource('videos', VideoController::class)->names('video');
@@ -18,6 +19,8 @@ Route::prefix('videos')->group(function () {
     Route::put('/{video}/sections/{section}', [SectionController::class, 'update'])->name('video.sections.update');
     Route::delete('/{video}/sections/{section}', [SectionController::class, 'destroy'])->name('video.sections.delete');
     Route::get('/{video}/sections/{section}', [SectionController::class, 'show'])->name('video.sections.show');
+    Route::post('/{video}/url-codes', [VideoUrlCodeController::class, 'store'])->name('video.url-codes.create');
+    Route::get('/{video}/url-codes', [VideoUrlCodeController::class, 'getUrlCodesByVideoId'])->name('video.url-codes');
 
 });
 
