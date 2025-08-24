@@ -28,7 +28,7 @@ class SectionRepository implements SectionRepositoryInterface
     }
     public function updateSection($id, array $data)
     {
-        $section = $this->section->getSectionById($id);
+        $section = $this->getSectionById($id);
         if ($section) {
             $section->update($data);
             return $section;
@@ -37,7 +37,7 @@ class SectionRepository implements SectionRepositoryInterface
     }
     public function deleteSection($id)
     {
-        $section = $this->section->getSectionById($id);
+        $section = $this->getSectionById($id);
         if ($section) {
             $section->delete();
             return true;
