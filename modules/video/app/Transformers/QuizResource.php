@@ -13,7 +13,7 @@ class QuizResource extends JsonResource
     {
         return [
             'id'            => $this->id,
-            'quize_number'  => $this->quize_number,
+            'quiz_number'  => $this->quize_number,
             'video_id'      => $this->video_id,
             'start'         => $this->start,
             'end'           => $this->end,

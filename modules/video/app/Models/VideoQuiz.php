@@ -5,6 +5,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class VideoQuiz extends Model
 {
+    protected $table = 'video_quizzes';
     protected $fillable = [
         'quize_number',
         'video_id',

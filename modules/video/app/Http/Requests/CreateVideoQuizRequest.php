@@ -4,7 +4,7 @@ namespace Modules\Video\App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreVideoQuizRequest extends FormRequest
+class CreateVideoQuizRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -14,17 +14,17 @@ class StoreVideoQuizRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'quize_number' => 'required|integer',
-            'video_id' => 'required|exists:videos,id',
-            'start' => 'required|integer|min:0',
-            'end' => 'required|integer|gte:start',
-            'questionType' => 'required|integer',
-            'question' => 'required|string|max:191',
-            'answer1' => 'nullable|string|max:191',
-            'answer2' => 'nullable|string|max:191',
-            'answer3' => 'nullable|string|max:191',
-            'answer4' => 'nullable|string|max:191',
-            'answer5' => 'nullable|string|max:191',
+            'quizzes' => 'required|array',
+            'quizzes.*.start' => 'required|integer|min:0',
+            'quizzes.*.end' => 'required|integer|gte:quizzes.*.start',
+            'quizzes.*.questionType' => 'required|integer',
+            'quizzes.*.question' => 'required|string|max:191',
+            'quizzes.*.answer1' => 'nullable|string|max:191',
+            'quizzes.*.answer2' => 'nullable|string|max:191',
+            'quizzes.*.answer3' => 'nullable|string|max:191',
+            'quizzes.*.answer4' => 'nullable|string|max:191',
+            'quizzes.*.answer5' => 'nullable|string|max:191',
         ];
+
     }
 }

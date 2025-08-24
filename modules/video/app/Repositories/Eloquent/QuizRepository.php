@@ -20,7 +20,7 @@ class QuizRepository implements QuizRepositoryInterface
 
     public function getQuizById($id)
     {
-        return $this->quiz->findOrFail($id);
+        return $this->quiz->find($id);
     }
 
     public function createQuiz(array $data)

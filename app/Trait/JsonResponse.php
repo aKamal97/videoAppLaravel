@@ -13,10 +13,11 @@ trait JsonResponse
      * @param int $statusCode
      * @return \Illuminate\Http\JsonResponse
      */
-    public function success( $data = [], int $statusCode = 200): LaravelJsonResponse
+    public function success( $data = [], $message='',  int $statusCode = 200): LaravelJsonResponse
     {
         return response()->json([
             'status' => 'success',
+            'message' => $message,
             'data' => $data
         ], $statusCode);
     }
