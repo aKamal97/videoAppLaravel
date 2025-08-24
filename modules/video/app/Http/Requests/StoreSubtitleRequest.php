@@ -11,7 +11,13 @@ class StoreSubtitleRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [];
+        return [
+            'subtitles'                     => 'required|array',
+            'subtitles.*.video_id'          => 'required|exists:videos,id',
+            'subtitles.*.start'             => 'required|integer|min:0',
+            'subtitles.*.end'               => 'required|integer|gt:subtitles.*.start',
+            'subtitles.*.text'              => 'required|string|max:191',
+        ];
     }
 
     /**

@@ -14,7 +14,6 @@ class UpdateVideoQuizRequest extends FormRequest
     public function rules(): array
 {
    return [
-        'quize_number' => 'sometimes|integer',
         'start'        => 'sometimes|integer|min:0',
         'end'          => 'sometimes|integer|gte:start',
         'questionType' => 'sometimes|integer', 
