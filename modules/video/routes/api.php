@@ -9,7 +9,10 @@ use Modules\Video\App\Http\Controllers\SectionController;
 // });
 Route::prefix('videos')->group(function () {
     Route::get('/', [VideoController::class, 'index'])->name('video.index');
-    Route::post('/', [VideoController::class, 'create'])->name('video.create');
+    Route::post('/', [VideoController::class, 'store'])->name('video.store');
+    Route::get('/{video}', [VideoController::class, 'show'])->name('video.show');
+    Route::put('/{video}', [VideoController::class, 'update'])->name('video.update');
+    Route::delete('/{video}', [VideoController::class, 'destroy'])->name('video.destroy');
     Route::get('/{video}/sections', [SectionController::class, 'getSections'])->name('video.sections');
     Route::post('/{video}/sections', [SectionController::class, 'create'])->name('video.sections.create');
 

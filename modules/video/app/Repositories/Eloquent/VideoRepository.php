@@ -30,8 +30,9 @@ class VideoRepository implements VideoRepositoryInterface
     }
     public function update($id, array $data)
     {
+
         // Implementation for updating a video
-        $video = $this->video->getById($id);
+        $video = $this->getById($id);
         if ($video) {
             $video->update($data);
             return $video;
@@ -41,7 +42,7 @@ class VideoRepository implements VideoRepositoryInterface
     public function delete($id)
     {
         // Implementation for deleting a video
-        $video = $this->video->getById($id);
+        $video = $this->getById($id);
         if ($video) {
             $video->delete();
             return true;
