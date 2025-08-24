@@ -15,22 +15,22 @@ class SectionServiceRepository implements SectionServiceInterface
     {
         return $this->sectionRepository->getAllSections();
     }
-    public function getSectionById($id)
+    public function getSectionByVideoId($videoId,$sectionId)
     {
-        return $this->sectionRepository->getSectionById($id);
+        return $this->sectionRepository->getSectionByVideoId($videoId,$sectionId);
     }
     public function createSection($videoId,array $data)
     {
         $data['video_id'] = $videoId;
         return $this->sectionRepository->createSection($data);
     }
-    public function updateSection($id, array $data)
+    public function updateSection($videoId,$sectionId, array $data)
     {
-        return $this->sectionRepository->updateSection($id, $data);
+        return $this->sectionRepository->updateSection($videoId,$sectionId, $data);
     }
-    public function deleteSection($id)
+    public function deleteSection($videoId,$sectionId)
     {
-        return $this->sectionRepository->deleteSection($id);
+        return $this->sectionRepository->deleteSection($videoId,$sectionId);
     }
     public function getMaxSectionNumberByVideoId($videoId)
     {
