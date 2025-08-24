@@ -22,7 +22,12 @@ class SubtitleController extends Controller
      */
     public function index()
     {
-        return view('video::index');
+        $subtitles = $this->subtitleService->getAllSubtitles();
+        if($subtitles->isEmpty()) {
+            return $this->success([], 404);
+        }
+
+        return $this->success(SubtitleResource::collection($subtitles), 200);
     }
 
     /**
