@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Modules\Video\App\Http\Controllers\VideoController;
 use Modules\Video\App\Http\Controllers\SectionController;
 use Modules\Video\App\Http\Controllers\QuizController;
+use Modules\Video\App\Http\Controllers\SubtitleController;
 
 // Route::middleware(['auth:sanctum'])->prefix('v1')->group(function () {
 //     Route::apiResource('videos', VideoController::class)->names('video');
@@ -28,4 +29,14 @@ Route::prefix('quizzes')->group(function () {
     Route::post('/create/{videoId}', [QuizController::class, 'create'])->name('quiz.create');
     Route::post('/{id}', [QuizController::class, 'update'])->name('quiz.update');
     Route::delete('/{id}', [QuizController::class, 'destroy'])->name('quiz.destroy');
+});
+
+//subtitles 
+Route::prefix('subtitles')->group(function () {
+    Route::get('/', [SubtitleController::class, 'index'])->name('subtitle.index');
+    Route::get('/{id}', [SubtitleController::class, 'show'])->name('subtitle.show');
+    Route::get('/video/{videoId}', [SubtitleController::class, 'getSubtitles'])->name('subtitle.video');
+    Route::post('/create/{videoId}', [SubtitleController::class, 'create'])->name('subtitle.create');
+    Route::post('/{id}', [SubtitleController::class, 'update'])->name('subtitle.update');
+    Route::delete('/{id}', [SubtitleController::class, 'destroy'])->name('subtitle.destroy');
 });

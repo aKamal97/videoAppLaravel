@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Video\Models;
+namespace Modules\Video\App\Models;
 use Modules\Video\App\Models\Video;
 use Illuminate\Database\Eloquent\Model;
 

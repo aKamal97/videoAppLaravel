@@ -1,10 +1,10 @@
 <?php
 
-namespace Modules\Video\Http\Requests;
+namespace Modules\Video\App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreSubtitleRequest extends FormRequest
+class CreateSubtitleRequest extends FormRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -13,7 +13,6 @@ class StoreSubtitleRequest extends FormRequest
     {
         return [
             'subtitles'                     => 'required|array',
-            'subtitles.*.video_id'          => 'required|exists:videos,id',
             'subtitles.*.start'             => 'required|integer|min:0',
             'subtitles.*.end'               => 'required|integer|gt:subtitles.*.start',
             'subtitles.*.text'              => 'required|string|max:191',

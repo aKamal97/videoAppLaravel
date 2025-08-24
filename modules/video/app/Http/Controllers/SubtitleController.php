@@ -1,12 +1,22 @@
 <?php
 
-namespace Modules\Video\Http\Controllers;
+namespace Modules\Video\App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Modules\Video\App\Http\Requests\CreateSubtitleRequest;
+use Modules\Video\App\Services\Contract\SubtitleServiceInterface;
+use Modules\Video\App\Transformers\SubtitleResource;
+
 
 class SubtitleController extends Controller
 {
+    private $subtitleService;
+
+    public function __construct()
+    {
+        $this->subtitleService = app(SubtitleServiceInterface::class);
+    }
     /**
      * Display a listing of the resource.
      */
@@ -18,9 +28,32 @@ class SubtitleController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create($videoId , CreateSubtitleRequest $request)
     {
-        return view('video::create');
+        $data = $request->validated();
+        $subtitles =[];
+        try{
+            foreach($data['subtitles'] as $subtitleData ){
+                $isVideoHasSubtitles = $this->subtitleService->getSubtitlesByVideoId($videoId);
+                if($isVideoHasSubtitles->isEmpty()){
+                        $subtitleData['subtitle_number'] = 1;
+                    } else {
+                        $lastSubtitleNumber = $this->subtitleService->getMaxSubtitleNumberByVideoId($videoId);
+                            $subtitleData['subtitle_number'] = $lastSubtitleNumber + 1;
+                    }
+                $subtitle = $this->subtitleService->createSubtitle($videoId, $subtitleData);
+                if(!$subtitle) {
+                    return $this->failuer('Subtitle not created', 400);
+                }
+                else
+                {
+                    array_push($subtitles, $subtitle);
+                }
+            }
+            return $this->success(SubtitleResource::collection(collect($subtitles)), 201);
+        } catch (\Exception $e) {
+            return $this->failuer('An error occurred while creating subtitles: ' . $e->getMessage(), 500);
+        }
     }
 
     /**
