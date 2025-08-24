@@ -20,7 +20,7 @@ class VideoRepository implements VideoRepositoryInterface
     public function getById($id)
     {
          // Implementation for getting a video by ID
-         return $this->video->findOrFail($id);
+         return $this->video->find($id);
     }
     public function create(array $data)
     {

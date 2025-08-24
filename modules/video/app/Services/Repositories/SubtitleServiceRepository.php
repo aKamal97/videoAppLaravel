@@ -30,14 +30,19 @@ class SubtitleServiceRepository implements SubtitleServiceInterface
         return $this->subtitleRepository->createSubtitle($data);
     }
 
-    public function updateSubtitle($id, array $data)
+    public function subtitleBelongsToVideo($subtitleId, $videoId)
     {
-        return $this->subtitleRepository->updateSubtitle($id, $data);
+        return $this->subtitleRepository->subtitleBelongsToVideo($subtitleId, $videoId);
     }
 
-    public function deleteSubtitle($id)
+    public function updateSubtitle($subtitleId, $videoId, array $data)
     {
-        return $this->subtitleRepository->deleteSubtitle($id);
+        return $this->subtitleRepository->updateSubtitle($subtitleId, $videoId, $data);
+    }
+
+    public function deleteSubtitle($subtitleId, $videoId)
+    {
+        return $this->subtitleRepository->deleteSubtitle($subtitleId, $videoId);
     }
 
     public function getSubtitlesByVideoId($videoId)

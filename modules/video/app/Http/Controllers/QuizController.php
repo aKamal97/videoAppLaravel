@@ -93,37 +93,59 @@ class QuizController extends Controller
      * Update the specified resource in storage.
      */
     public function update(UpdateVideoQuizRequest $request, $id)
-{
-    $data = $request->validated();
-    // return response()->json($data);
-    try {
-        $quiz = $this->quizService->updateQuiz($id, $data);
+    {
+        $data = $request->validated();
+        $videoId = $data['video_id'];
 
-        if (!$quiz) {
-            return $this->failuer('Quiz not found or could not be updated', 404);
+        try {
+            $quiz = $this->quizService->getQuizById($id);
+
+            if (!$quiz) {
+                return $this->failuer('Quiz not found', 404);
+            }
+
+            $updated = $this->quizService->updateQuiz($id, $videoId, $data);
+
+            if (!$updated) {
+                return $this->failuer('Quiz not found or does not belong to the given video', 404);
+            }
+
+            return $this->success(new QuizResource($updated), 200);
+
+        } catch (\Exception $e) {
+            return $this->failuer('An error occurred while updating quiz: ' . $e->getMessage(), 500);
         }
-
-        return $this->success(new QuizResource($quiz), 200);
-
-    } catch (\Exception $e) {
-        return $this->failuer('An error occurred while updating quiz: ' . $e->getMessage(), 500);
     }
-}
-
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id) 
+    public function destroy($quizId, $videoId) 
     {
-        $quiz = $this->quizService->getQuizById($id);
-        // return response()->json($quiz);
+        try {
+            $quiz = $this->quizService->getQuizById($quizId);
 
-        if(!$quiz) {
-            return $this->failuer('Quiz not found', 404);
+            if (!$quiz) {
+                return $this->failuer('Quiz not found', 404);
+            }
+
+            $quizzes = $this->quizService->getQuizzesByVideoId($videoId);
+
+            if ($quizzes === null) {
+                return $this->failuer('Video not found', 404);
+            }
+
+            $deleted = $this->quizService->deleteQuiz($quizId, $videoId);
+
+            if (!$deleted) {
+                return $this->failuer('Quiz does not belong to the given video', 400);
+            }
+
+            return $this->success("Quiz {$quizId} deleted successfully", 200);
+
+        } catch (\Exception $e) {
+            return $this->failuer('An error occurred while deleting quiz: ' . $e->getMessage(), 500);
         }
-        $this->quizService->deleteQuiz($id);
-        return $this->success('Quiz ' . $id . 'deleted successfully', 200);
     }
 
     /**
@@ -132,9 +154,15 @@ class QuizController extends Controller
     public function getQuizzes($videoId)
     {
         $quizzes = $this->quizService->getQuizzesByVideoId($videoId);
-        if($quizzes->isEmpty()) {
-            return $this->success([], 404);
+
+        if ($quizzes === null) {
+            return $this->failuer('Video not found', 404);
         }
+
+        if ($quizzes->isEmpty()) {
+            return $this->success([], 'No quizzes found for video ' . $videoId, 404);
+        }
+
         return $this->success(QuizResource::collection($quizzes), 200);
     }
 

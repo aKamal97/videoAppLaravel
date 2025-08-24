@@ -4,6 +4,8 @@ namespace Modules\Video\App\Repositories\Eloquent;
 
 use Modules\Video\App\Models\VideoSubtitles;
 use Modules\Video\App\Repositories\Contract\SubtitleRepositoryInterface;
+use Modules\Video\App\Repositories\Contract\VideoRepositoryInterface;
+
 
 class SubtitleRepository implements SubtitleRepositoryInterface
 {
@@ -29,20 +31,33 @@ class SubtitleRepository implements SubtitleRepositoryInterface
         return $this->subtitle->create($data);
     }
 
-    public function updateSubtitle($id, array $data)
+    public function subtitleBelongsToVideo($subtitleId, $videoId): bool
     {
-        $subtitle = $this->getSubtitleById($id);
-        if ($subtitle) {
+        return $this->subtitle
+            ->where('id', $subtitleId)
+            ->where('video_id', $videoId)
+            ->exists();
+    }
+
+    public function updateSubtitle($subtitleId, $videoId, array $data)
+    {
+        $isSubtitle = $this->subtitleBelongsToVideo($subtitleId, $videoId);
+
+        if ($isSubtitle) {
+            $subtitle = $this->getSubtitleById($subtitleId);
             $subtitle->update($data);
             return $subtitle;
         }
+
         return null;
     }
 
-    public function deleteSubtitle($id)
+    public function deleteSubtitle($subtitleId, $videoId)
     {
-        $subtitle = $this->getSubtitleById($id);
-        if ($subtitle) {
+        $isSubtitle = $this->subtitleBelongsToVideo($subtitleId, $videoId);
+
+        if ($isSubtitle) {
+            $subtitle = $this->getSubtitleById($subtitleId);
             $subtitle->delete();
             return true;
         }
@@ -51,8 +66,16 @@ class SubtitleRepository implements SubtitleRepositoryInterface
 
     public function getSubtitlesByVideoId($videoId)
     {
+        $video = app(VideoRepositoryInterface::class)->getById($videoId);
+
+        if (!$video) {
+            return null; 
+        }
+
         return $this->subtitle->where('video_id', $videoId)->get();
     }
+
+
 
     public function getMaxSubtitleNumberByVideoId($videoId)
     {

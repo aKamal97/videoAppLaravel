@@ -29,15 +29,21 @@ class QuizServiceRepository implements QuizServiceInterface
         return $this->quizRepository->createQuiz($data);
     }
 
-    public function updateQuiz($id, array $data)
+    public function quizBelongsToVideo($quizId, $videoId)
     {
-        return $this->quizRepository->updateQuiz($id, $data);
+        return $this->quizRepository->quizBelongsToVideo($quizId, $videoId);
     }
 
-    public function deleteQuiz($id)
+    public function updateQuiz($quizId, $videoId, array $data)
     {
-        return $this->quizRepository->deleteQuiz($id);
+        return $this->quizRepository->updateQuiz($quizId, $videoId, $data);
     }
+
+    public function deleteQuiz($quizId, $videoId)
+    {
+        return $this->quizRepository->deleteQuiz($quizId, $videoId);
+    }
+
 
     public function getQuizzesByVideoId($videoId)
     {

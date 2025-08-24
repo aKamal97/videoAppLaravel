@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Modules\Video\App\Http\Requests\CreateSubtitleRequest;
 use Modules\Video\App\Services\Contract\SubtitleServiceInterface;
 use Modules\Video\App\Transformers\SubtitleResource;
+use Modules\Video\App\Http\Requests\UpdateSubtitleRequest;
 
 
 class SubtitleController extends Controller
@@ -89,10 +90,79 @@ class SubtitleController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id) {}
+    public function update(UpdateSubtitleRequest $request, $id)
+    {
+        $data = $request->validated();
+        $videoId = $data['video_id'];
+
+        try {
+            $subtitle = $this->subtitleService->getSubtitleById($id);
+
+            if (!$subtitle) {
+                return $this->failuer('Subtitle not found', 404);
+            }
+            
+            $updated = $this->subtitleService->updateSubtitle($id, $videoId, $data);
+
+            if (!$updated) {
+                return $this->failuer('Subtitle does not belong to the given video', 404);
+            }
+
+            return $this->success(new SubtitleResource($updated), 200);
+
+        } catch (\Exception $e) {
+            return $this->failuer('An error occurred while updating subtitle: ' . $e->getMessage(), 500);
+        }
+    }
+
+
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id) {}
+    public function destroy($subtitleId, $videoId) 
+    {
+        try {
+            $subtitle = $this->subtitleService->getSubtitleById($subtitleId);
+
+            if (!$subtitle) {
+                return $this->failuer('Subtitle not found', 404);
+            }
+
+            $subtitles = $this->subtitleService->getSubtitlesByVideoId($videoId);
+
+            if ($subtitles === null) {
+                return $this->failuer('Video not found', 404);
+            } 
+            
+            $deleted = $this->subtitleService->deleteSubtitle($subtitleId, $videoId);
+
+            if (!$deleted) {
+                return $this->failuer('Subtitle does not belong to the given video', 400);
+            }
+
+            return $this->success("Subtitle {$subtitleId} deleted successfully", 200);
+
+        } catch (\Exception $e) {
+            return $this->failuer('An error occurred while deleting subtitle: ' . $e->getMessage(), 500);
+        }
+    }
+
+    public function getSubtitles($videoId)
+    {
+        $subtitles = $this->subtitleService->getSubtitlesByVideoId($videoId);
+
+        if ($subtitles === null) {
+            return $this->failuer('Video not found', 404);
+        }
+
+        if ($subtitles->isEmpty()) {
+            return $this->success([], 'No subtitles found for video ' . $videoId, 404);
+        }
+
+        return $this->success(SubtitleResource::collection($subtitles), 200);
+    }
+
+
+
 }

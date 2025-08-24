@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Video\Http\Requests;
+namespace Modules\Video\App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -12,12 +12,10 @@ class UpdateSubtitleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'subtitles'                     => 'required|array',
-            'subtitles.*.id'                => 'sometimes|exists:video_subtitles,id',
-            'subtitles.*.video_id'          => 'sometimes|exists:videos,id',
-            'subtitles.*.start'             => 'sometimes|integer|min:0',
-            'subtitles.*.end'               => 'sometimes|integer|gt:subtitles.*.start',
-            'subtitles.*.text'              => 'sometimes|string|max:191',
+            'start'             => 'sometimes|integer|min:0',
+            'end'               => 'sometimes|integer|gt:start',
+            'text'              => 'sometimes|string|max:191',
+            'video_id'          => 'required|exists:videos,id',
         ];
     }
 

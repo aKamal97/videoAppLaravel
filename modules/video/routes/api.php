@@ -28,7 +28,7 @@ Route::prefix('quizzes')->group(function () {
     Route::get('/video/{videoId}', [QuizController::class, 'getQuizzes'])->name('quiz.video');
     Route::post('/create/{videoId}', [QuizController::class, 'create'])->name('quiz.create');
     Route::post('/{id}', [QuizController::class, 'update'])->name('quiz.update');
-    Route::delete('/{id}', [QuizController::class, 'destroy'])->name('quiz.destroy');
+    Route::delete('/{quizId}/{videoId}', [QuizController::class, 'destroy'])->name('quiz.destroy');
 });
 
 //subtitles 
@@ -38,5 +38,5 @@ Route::prefix('subtitles')->group(function () {
     Route::get('/video/{videoId}', [SubtitleController::class, 'getSubtitles'])->name('subtitle.video');
     Route::post('/create/{videoId}', [SubtitleController::class, 'create'])->name('subtitle.create');
     Route::post('/{id}', [SubtitleController::class, 'update'])->name('subtitle.update');
-    Route::delete('/{id}', [SubtitleController::class, 'destroy'])->name('subtitle.destroy');
+    Route::delete('/{subtitleId}/{videoId}', [SubtitleController::class, 'destroy'])->name('subtitle.destroy');
 });
