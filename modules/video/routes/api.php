@@ -21,6 +21,9 @@ Route::prefix('videos')->group(function () {
     Route::get('/{video}/sections/{section}', [SectionController::class, 'show'])->name('video.sections.show');
     Route::post('/{video}/url-codes', [VideoUrlCodeController::class, 'store'])->name('video.url-codes.create');
     Route::get('/{video}/url-codes', [VideoUrlCodeController::class, 'getUrlCodesByVideoId'])->name('video.url-codes');
+    Route::put('/{video}/url-codes/{urlCode}', [VideoUrlCodeController::class, 'update'])->name('video.url-codes.update');
+    Route::delete('/{video}/url-codes/{urlCode}', [VideoUrlCodeController::class, 'destroy'])->name('video.url-codes.delete');
+    Route::get('/{video}/url-codes/{urlCode}', [VideoUrlCodeController::class, 'show'])->name('video.url-codes.show');
 
 });
 

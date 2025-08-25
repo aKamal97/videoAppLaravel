@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Modules\Video\App\Services\Contract\VideoServiceInterface;
 use Modules\Video\App\Services\Contract\VideoUrlCodeServiceInterface;
 use Modules\Video\App\Http\Requests\CreateVideoUrlCodeRequest;
+use Modules\Video\App\Http\Requests\UpdateVideoUrlCodeRequest;
 use Modules\Video\App\Transformers\VideoUrlCodeResource;
 
 class VideoUrlCodeController extends Controller
@@ -36,6 +37,9 @@ class VideoUrlCodeController extends Controller
      */
     public function getUrlCodesByVideoId($videoId)
     {
+        if (!is_numeric($videoId)) {
+            return $this->failuer('Video ID must be an integer', 400);
+        }
         if (!$this->videoUrlCodeService) {
             return $this->failuer('Service not available', 500);
         }
@@ -54,6 +58,9 @@ class VideoUrlCodeController extends Controller
      */
     public function store($videoId, CreateVideoUrlCodeRequest $request)
     {
+        if (!is_numeric($videoId)) {
+            return $this->failuer('Video ID must be an integer', 400);
+        }
         if (!$this->videoUrlCodeService) {
             return $this->failuer('Service not available', 500);
         }
@@ -83,6 +90,102 @@ class VideoUrlCodeController extends Controller
 
 
             return $this->success(data: VideoUrlCodeResource::collection($urlCodes), statusCode: 201);
+        } catch (\Throwable $e) {
+            return $this->failuer($e->getMessage(), 500);
+        }
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update($videoId, $urlCodeId, UpdateVideoUrlCodeRequest $request)
+    {
+        if (!is_numeric($videoId)) {
+            return $this->failuer('Video ID must be an integer', 400);
+        }
+        if (!is_numeric($urlCodeId)) {
+            return $this->failuer('Video-Url-Code ID must be an integer', 400);
+        }
+        if (!$this->videoUrlCodeService) {
+            return $this->failuer('Service not available', 500);
+        }
+        $video = $this->videoService->getById($videoId);
+        if (!$video) {
+            return $this->failuer('Video not found', 404);
+        }
+        $data = $request->validated();
+        try {
+            $updatedUrlCode = $this->videoUrlCodeService->updateUrlCode($videoId, $urlCodeId, $data);
+            if (!$updatedUrlCode) {
+                return $this->failuer('Url code not exist', 400);
+            }
+
+
+            return $this->success(message: "Url Code Updated Successfully!", data: new  VideoUrlCodeResource($updatedUrlCode), statusCode: 200);
+        } catch (\Throwable $e) {
+            return $this->failuer($e->getMessage(), 500);
+        }
+    }
+
+    /*
+    * Remove the specified resource from storage.
+    */
+    public function destroy($videoId, $urlCodeId)
+    {
+        if (!is_numeric($videoId)) {
+            return $this->failuer('Video ID must be an integer', 400);
+        }
+        if (!is_numeric($urlCodeId)) {
+            return $this->failuer('Video-Url-Code ID must be an integer', 400);
+        }
+        if (!is_numeric($videoId)) {
+            return $this->failuer('Video ID must be an integer', 400);
+        }
+        if (!is_numeric($urlCodeId)) {
+            return $this->failuer('Video-Url-Code ID must be an integer', 400);
+        }
+        if (!$this->videoUrlCodeService) {
+            return $this->failuer('Service not available', 500);
+        }
+        $video = $this->videoService->getById($videoId);
+        if (!$video) {
+            return $this->failuer('Video not found', 404);
+        }
+        try {
+            $isDeleted = $this->videoUrlCodeService->deleteUrlCode($videoId, $urlCodeId);
+            if (!$isDeleted) {
+                return $this->failuer('Url code not exist', 400);
+            }
+            return $this->success(message: "Url Code Deleted Successfully!", statusCode: 200);
+        } catch (\Throwable $e) {
+            return $this->failuer($e->getMessage(), 500);
+        }
+    }
+
+    /*
+    * Show the url code by video ID.
+    */
+    public function show($videoId, $urlCodeId)
+    {
+        if (!is_numeric($videoId)) {
+            return $this->failuer('Video ID must be an integer', 400);
+        }
+        if (!is_numeric($urlCodeId)) {
+            return $this->failuer('Video-Url-Code ID must be an integer', 400);
+        }
+        if (!$this->videoUrlCodeService) {
+            return $this->failuer('Service not available', 500);
+        }
+        $video = $this->videoService->getById($videoId);
+        if (!$video) {
+            return $this->failuer('Video not found', 404);
+        }
+        try {
+            $urlCode = $this->videoUrlCodeService->getUrlCodeByVideoId($videoId, $urlCodeId);
+            if (!$urlCode) {
+                return $this->failuer('Url code not exist ', 400);
+            }
+            return $this->success(data: new VideoUrlCodeResource($urlCode), statusCode: 200);
         } catch (\Throwable $e) {
             return $this->failuer($e->getMessage(), 500);
         }
