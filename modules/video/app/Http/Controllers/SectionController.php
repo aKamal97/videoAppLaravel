@@ -14,7 +14,7 @@ use Nwidart\Modules\Process\Updater;
 
 class SectionController extends Controller
 {
-    private $sectionService,$videoService;
+    private $sectionService, $videoService;
     public function __construct()
     {
         $this->sectionService = app(SectionServiceInterface::class);
@@ -38,8 +38,9 @@ class SectionController extends Controller
      */
     public function store($videoId, CreateSectionRequest $request)
     {
-
-
+        if (!is_numeric($videoId)) {
+            return $this->failuer('Video ID must be an integer', 400);
+        }
         $video = $this->videoService->getById($videoId);
         if (!$video) {
             return $this->failuer('Video not found', 404);
@@ -67,10 +68,9 @@ class SectionController extends Controller
                 return $this->failuer('Section not created', 400);
             }
             return $this->success(data: SectionResource::collection($sections), statusCode: 201);
-        }catch (\Throwable $e) {
+        } catch (\Throwable $e) {
             return $this->failuer($e->getMessage(), 500);
-         }
-
+        }
     }
 
 
@@ -80,7 +80,13 @@ class SectionController extends Controller
      */
     public function show($videoId, $sectionId)
     {
-         $video = $this->videoService->getById($videoId);
+        if (!is_numeric($videoId)) {
+            return $this->failuer('Video ID must be an integer', 400);
+        }
+        if (!is_numeric($sectionId)) {
+            return $this->failuer('Section ID must be an integer', 400);
+        }
+        $video = $this->videoService->getById($videoId);
         if (!$video) {
             return $this->failuer('Video not found', 404);
         }
@@ -102,8 +108,14 @@ class SectionController extends Controller
      */
     public function update(UpdateSection $request, $videoId, $sectionId)
     {
+        if (!is_numeric($videoId)) {
+            return $this->failuer('Video ID must be an integer', 400);
+        }
+        if (!is_numeric($sectionId)) {
+            return $this->failuer('Section ID must be an integer', 400);
+        }
         $data = $request->validated();
-         $video = $this->videoService->getById($videoId);
+        $video = $this->videoService->getById($videoId);
         if (!$video) {
             return $this->failuer('Video not found', 404);
         }
@@ -125,7 +137,13 @@ class SectionController extends Controller
      */
     public function destroy($videoId, $sectionId)
     {
-         $video = $this->videoService->getById($videoId);
+        if (!is_numeric($videoId)) {
+            return $this->failuer('Video ID must be an integer', 400);
+        }
+        if (!is_numeric($sectionId)) {
+            return $this->failuer('Section ID must be an integer', 400);
+        }
+        $video = $this->videoService->getById($videoId);
         if (!$video) {
             return $this->failuer('Video not found', 404);
         }
@@ -146,7 +164,10 @@ class SectionController extends Controller
      */
     public function getSections($videoId)
     {
-         $video = $this->videoService->getById($videoId);
+        if (!is_numeric($videoId)) {
+            return $this->failuer('Video ID must be an integer', 400);
+        }
+        $video = $this->videoService->getById($videoId);
         if (!$video) {
             return $this->failuer('Video not found', 404);
         }
