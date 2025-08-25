@@ -4,20 +4,20 @@ namespace Modules\Video\App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateSectionRequest extends FormRequest
+class UpdateVideoRequest extends FormRequest
 {
     /**
      * Get the validation rules that apply to the request.
      */
     public function rules(): array
     {
-
         return [
+             'title' => ['string','max:255'],
+            'url'=> ['string','url','max:255'],
+            'length' => ['integer','min:1'],
+            'time_section_threshold' => ['integer','min:1'],
+            'video_sections_bool' => ['boolean'],
 
-            'sections' => ['required','array','min:1'],
-            'sections.*.start' => ['required','integer','min:0'],
-            'sections.*.end' => ['required','integer','min:1','gt:sections.*.start'],
-            'sections.*.title' => ['required','string','max:255'],
         ];
     }
 
@@ -28,6 +28,4 @@ class CreateSectionRequest extends FormRequest
     {
         return true;
     }
-
-   
 }

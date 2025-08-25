@@ -4,22 +4,27 @@ namespace Modules\Video\App\Providers;
 
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
+use Modules\Video\App\Models\VideoUrlCode;
 use Modules\Video\App\Repositories\Contract\SectionRepositoryInterface;
 use Modules\Video\App\Repositories\Contract\QuizRepositoryInterface;
 use Modules\Video\App\Repositories\Contract\SubtitleRepositoryInterface;
 use Modules\Video\App\Repositories\Contract\VideoRepositoryInterface;
+use Modules\Video\App\Repositories\Contract\VideoUrlCodeInterface;
 use Modules\Video\App\Repositories\Eloquent\SectionRepository;
 use Modules\Video\App\Repositories\Eloquent\QuizRepository;
 use Modules\Video\App\Repositories\Eloquent\SubtitleRepository;
 use Modules\Video\App\Repositories\Eloquent\VideoRepository;
+use Modules\Video\App\Repositories\Eloquent\VideoUrlCodeRepository;
 use Modules\Video\App\Services\Contract\SectionServiceInterface;
 use Modules\Video\App\Services\Contract\QuizServiceInterface;
 use Modules\Video\App\Services\Contract\SubtitleServiceInterface;
 use Modules\Video\App\Services\Contract\VideoServiceInterface;
+use Modules\Video\App\Services\Contract\VideoUrlCodeServiceInterface;
 use Modules\Video\App\Services\Repositories\SectionServiceRepository;
 use Modules\Video\App\Services\Repositories\QuizServiceRepository;
 use Modules\Video\App\Services\Repositories\SubtitleServiceRepository;
 use Modules\Video\App\Services\Repositories\VideoServiceRepository;
+use Modules\Video\App\Services\Repositories\VideoUrlCodeServiceRepository;
 use Nwidart\Modules\Traits\PathNamespace;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -76,6 +81,7 @@ class VideoServiceProvider extends ServiceProvider
             SectionServiceRepository::class
         );
 
+
         //Bind Quiz Repository here
         $this->app->bind(
             QuizRepositoryInterface::class,
@@ -98,6 +104,19 @@ class VideoServiceProvider extends ServiceProvider
         $this->app->bind(
             SubtitleServiceInterface::class,
             SubtitleServiceRepository::class
+        );
+
+
+        // Bind Url Code Repository
+        $this->app->bind(
+            VideoUrlCodeInterface::class,
+            VideoUrlCodeRepository::class
+        );
+
+        // Bind Url Code Service
+        $this->app->bind(
+            VideoUrlCodeServiceInterface::class,
+            VideoUrlCodeServiceRepository::class
         );
 
     }
