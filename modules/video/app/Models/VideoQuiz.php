@@ -1,25 +1,25 @@
 <?php
-
 namespace Modules\Video\App\Models;
-use Modules\Video\App\Models\Video;
+
 use Illuminate\Database\Eloquent\Model;
 
-class VideoSubtitles extends Model
+class VideoQuiz extends Model
 {
-
-    protected $table = 'video_subtitles';
-
+    protected $table = 'video_quizzes';
     protected $fillable = [
-        'subtitle_number',
+        'quize_number',
         'video_id',
         'start',
         'end',
-        'text',
+        'questionType',
+        'question',
+        'answer1',
+        'answer2',
+        'answer3',
+        'answer4',
+        'answer5',
     ];
 
-    /**
-     * Define relationship with Video model
-     */
     public function video()
     {
         return $this->belongsTo(Video::class);
