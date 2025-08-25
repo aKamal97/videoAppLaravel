@@ -19,13 +19,9 @@ class VideoRepository implements VideoRepositoryInterface
    }
     public function getById($id)
     {
-        try{
-
-            // Implementation for getting a video by ID
-            return $this->video->findOrFail($id);
-        }catch (\Exception $e){
-            return null;
-        }
+        // Implementation for getting a video by ID
+        // Let findOrFail throw ModelNotFoundException if not found
+        return $this->video->findOrFail($id);
     }
     public function create(array $data)
     {
@@ -35,24 +31,17 @@ class VideoRepository implements VideoRepositoryInterface
     }
     public function update($id, array $data)
     {
-
         // Implementation for updating a video
         $video = $this->getById($id);
-        if ($video) {
-            $video->update($data);
-            return $video;
-        }
-        return null;
+        $video->update($data);
+        return $video;
     }
     public function delete($id)
     {
         // Implementation for deleting a video
         $video = $this->getById($id);
-        if ($video) {
-            $video->delete();
-            return true;
-        }
-        return false;
+        $video->delete();
+        return true;
     }
 
 }

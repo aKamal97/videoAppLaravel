@@ -24,7 +24,7 @@ class VideoController extends Controller
     {
         $videos = $this->videoService->getAll();
         if ($videos->isEmpty()) {
-            return $this->success([], 404);
+            return $this->success(__('No data found'),[], 404);
         }
         return $this->success(data: VideoResource::collection($this->videoService->getAll()), statusCode: 200);
     }
@@ -38,7 +38,7 @@ class VideoController extends Controller
         try {
             $video = $this->videoService->create($data);
             if (!$video) {
-                return $this->failuer('Video not created', 400);
+                return $this->failuer(__('Video not created'), 400);
             }
 
             return $this->success(data: new VideoResource($video), statusCode: 201);
@@ -53,9 +53,10 @@ class VideoController extends Controller
      */
     public function show($id)
     {
-
         try {
             return $this->success(data: new VideoResource($this->videoService->getById($id)), statusCode: 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return $this->failuer(__('Video not found'), 404);
         } catch (\Throwable $e) {
             return $this->failuer($e->getMessage(), 500);
         }
@@ -71,11 +72,9 @@ class VideoController extends Controller
         $data = $request->validated();
         try {
             $video = $this->videoService->update($id, $data);
-            if (!$video) {
-                return $this->failuer('Video not updated', 400);
-            }
-
             return $this->success(data: new VideoResource($video), statusCode: 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return $this->failuer(__('Video not found'), 404);
         } catch (\Throwable $e) {
             return $this->failuer($e->getMessage(), 500);
         }
@@ -87,12 +86,10 @@ class VideoController extends Controller
     public function destroy($id)
     {
         try {
-            $deleted = $this->videoService->delete($id);
-            if (!$deleted) {
-                return $this->failuer('Video not deleted', 400);
-            }
-
-            return $this->success(message: 'video deleted successfully',  statusCode: 200);
+            $this->videoService->delete($id);
+            return $this->success(message: __('video deleted successfully'),  statusCode: 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return $this->failuer(__('Video not found'), 404);
         } catch (\Throwable $e) {
             return $this->failuer($e->getMessage(), 500);
         }

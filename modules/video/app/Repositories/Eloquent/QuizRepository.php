@@ -21,7 +21,7 @@ class QuizRepository implements QuizRepositoryInterface
 
     public function getQuizById($id)
     {
-        return $this->quiz->find($id);
+        return $this->quiz->findOrFail($id);
     }
 
     public function createQuiz(array $data)
@@ -41,35 +41,33 @@ class QuizRepository implements QuizRepositoryInterface
     {
         $isQuiz = $this->quizBelongsToVideo($quizId, $videoId);
 
-        if ($isQuiz) {
-            $quiz = $this->getQuizById($quizId);
-            $quiz->update($data);
-            return $quiz;
+        if (!$isQuiz) {
+            return null;
         }
 
-        return null;
+        $quiz = $this->getQuizById($quizId);
+        $quiz->update($data);
+        return $quiz;
     }
 
     public function deleteQuiz($quizId, $videoId)
     {
         $isQuiz = $this->quizBelongsToVideo($quizId, $videoId);
 
-        if ($isQuiz) {
-            $quiz = $this->getQuizById($quizId);
-            $quiz->delete();
-            return true;
+        if (!$isQuiz) {
+            return false;
         }
-        return false;
+
+        $quiz = $this->getQuizById($quizId);
+        $quiz->delete();
+        return true;
     }
 
     public function getQuizzesByVideoId($videoId)
     {
-        $video = app(VideoRepositoryInterface::class)->getById($videoId);
-
-        if (!$video) {
-            return null; 
-        }
-
+        // Let VideoRepository throw ModelNotFoundException if video not found
+        app(VideoRepositoryInterface::class)->getById($videoId);
+        
         return $this->quiz->where('video_id', $videoId)->get();
     }
 

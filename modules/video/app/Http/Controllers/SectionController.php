@@ -39,11 +39,13 @@ class SectionController extends Controller
     public function store($videoId, CreateSectionRequest $request)
     {
         if (!is_numeric($videoId)) {
-            return $this->failuer('Video ID must be an integer', 400);
+            return $this->failuer(__('Video ID must be an integer'), 400);
         }
-        $video = $this->videoService->getById($videoId);
-        if (!$video) {
-            return $this->failuer('Video not found', 404);
+        try {
+            // First validate video exists - this will throw ModelNotFoundException if video not found
+            $this->videoService->getById($videoId);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return $this->failuer(__('Video not found'), 404);
         }
         $data = $request->validated();
         $sections = [];
@@ -58,16 +60,18 @@ class SectionController extends Controller
                 }
                 $section = $this->sectionService->createSection($videoId, $sectionData);
                 if (!$section) {
-                    return $this->failuer('Section not created', 400);
+                    return $this->failuer(__('Section not created'), 400);
                 } else {
                     array_push($sections, $section);
                 }
             }
 
             if (empty($sections)) {
-                return $this->failuer('Section not created', 400);
+                return $this->failuer(__('Section not created'), 400);
             }
             return $this->success(data: SectionResource::collection($sections), statusCode: 201);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return $this->failuer(__('Section not exist'), 404);
         } catch (\Throwable $e) {
             return $this->failuer($e->getMessage(), 500);
         }
@@ -81,21 +85,24 @@ class SectionController extends Controller
     public function show($videoId, $sectionId)
     {
         if (!is_numeric($videoId)) {
-            return $this->failuer('Video ID must be an integer', 400);
+            return $this->failuer(__('Video ID must be an integer'), 400);
         }
         if (!is_numeric($sectionId)) {
-            return $this->failuer('Section ID must be an integer', 400);
+            return $this->failuer(__('Section ID must be an integer'), 400);
         }
-        $video = $this->videoService->getById($videoId);
-        if (!$video) {
-            return $this->failuer('Video not found', 404);
+        try {
+            // First validate video exists - this will throw ModelNotFoundException if video not found
+            $this->videoService->getById($videoId);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return $this->failuer(__('Video not found'), 404);
         }
         try {
             $section = $this->sectionService->getSectionByVideoId($videoId, $sectionId);
-            if (!$section) {
-                return $this->failuer('Section not exist ', 400);
-            }
             return $this->success(data: new SectionResource($section), statusCode: 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return $this->failuer(__('Section not exist'), 404);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return $this->failuer(__('Section not exist'), 404);
         } catch (\Throwable $e) {
             return $this->failuer($e->getMessage(), 500);
         }
@@ -109,24 +116,24 @@ class SectionController extends Controller
     public function update(UpdateSection $request, $videoId, $sectionId)
     {
         if (!is_numeric($videoId)) {
-            return $this->failuer('Video ID must be an integer', 400);
+            return $this->failuer(__('Video ID must be an integer'), 400);
         }
         if (!is_numeric($sectionId)) {
-            return $this->failuer('Section ID must be an integer', 400);
+            return $this->failuer(__('Section ID must be an integer'), 400);
         }
         $data = $request->validated();
-        $video = $this->videoService->getById($videoId);
-        if (!$video) {
-            return $this->failuer('Video not found', 404);
+        try {
+            // First validate video exists - this will throw ModelNotFoundException if video not found
+            $this->videoService->getById($videoId);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return $this->failuer(__('Video not found'), 404);
         }
         try {
 
             $updatedSection = $this->sectionService->updateSection($videoId, $sectionId, $data);
-            if (!$updatedSection) {
-                return $this->failuer('Section not exist ', 400);
-            }
-
-            return $this->success(message: "section updated successfully", data: new  SectionResource($updatedSection), statusCode: 200);
+            return $this->success(message: __("section updated successfully"), data: new  SectionResource($updatedSection), statusCode: 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return $this->failuer(__('Section not exist'), 404);
         } catch (\Throwable $e) {
             return $this->failuer($e->getMessage(), 500);
         }
@@ -138,22 +145,22 @@ class SectionController extends Controller
     public function destroy($videoId, $sectionId)
     {
         if (!is_numeric($videoId)) {
-            return $this->failuer('Video ID must be an integer', 400);
+            return $this->failuer(__('Video ID must be an integer'), 400);
         }
         if (!is_numeric($sectionId)) {
-            return $this->failuer('Section ID must be an integer', 400);
-        }
-        $video = $this->videoService->getById($videoId);
-        if (!$video) {
-            return $this->failuer('Video not found', 404);
+            return $this->failuer(__('Section ID must be an integer'), 400);
         }
         try {
-            $deleted = $this->sectionService->deleteSection($videoId, $sectionId);
-            if (!$deleted) {
-                return $this->failuer('Section not exist ', 400);
-            }
-
-            return $this->success(message: 'section deleted successfully',  statusCode: 200);
+            // First validate video exists - this will throw ModelNotFoundException if video not found
+            $this->videoService->getById($videoId);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return $this->failuer(__('Video not found'), 404);
+        }
+        try {
+            $this->sectionService->deleteSection($videoId, $sectionId);
+            return $this->success(message: __('section deleted successfully'),  statusCode: 200);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return $this->failuer(__('Section not exist'), 404);
         } catch (\Throwable $e) {
             return $this->failuer($e->getMessage(), 500);
         }
@@ -165,16 +172,24 @@ class SectionController extends Controller
     public function getSections($videoId)
     {
         if (!is_numeric($videoId)) {
-            return $this->failuer('Video ID must be an integer', 400);
+            return $this->failuer(__('Video ID must be an integer'), 400);
         }
-        $video = $this->videoService->getById($videoId);
-        if (!$video) {
-            return $this->failuer('Video not found', 404);
+        
+        try {
+            // First validate video exists - this will throw ModelNotFoundException if video not found
+            $this->videoService->getById($videoId);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return $this->failuer(__('Video not found'), 404);
         }
-        $sections = $this->sectionService->getSectionsByVideoId($videoId);
-        if ($sections->isEmpty()) {
-            return $this->success([], 404);
+        
+        try {
+            $sections = $this->sectionService->getSectionsByVideoId($videoId);
+            if ($sections->isEmpty()) {
+                return $this->success([], 404);
+            }
+            return $this->success(SectionResource::collection($sections), 200);
+        } catch (\Throwable $e) {
+            return $this->failuer($e->getMessage(), 500);
         }
-        return $this->success(SectionResource::collection($sections), 200);
     }
 }

@@ -16,9 +16,9 @@ class VideoUrlCodeRepository implements VideoUrlCodeInterface
        // Implementation for getting all video URL codes
        return $this->videoUrlCode->all();
    }
-    public function getUrlCodeByVideoId($videoId,$urlCodeId)
+    public function getUrlCodeByVideoId($videoId, $urlCodeId)
     {
-         return $this->videoUrlCode->where('video_id', $videoId)->where('id', $urlCodeId)->first();
+         return $this->videoUrlCode->where('video_id', $videoId)->where('id', $urlCodeId)->firstOrFail();
     }
     public function createUrlCode(array $data)
     {
@@ -26,26 +26,19 @@ class VideoUrlCodeRepository implements VideoUrlCodeInterface
         // Implementation for creating a new video URL code
         return $this->videoUrlCode->create($data);
     }
-    public function updateUrlCode($videoId,$urlCodeId, array $data)
+    public function updateUrlCode($videoId, $urlCodeId, array $data)
     {
-
         // Implementation for updating a video URL code
-        $urlCode = $this->getUrlCodeByVideoId($videoId,$urlCodeId);
-        if ($urlCode) {
-            $urlCode->update($data);
-            return $urlCode;
-        }
-        return null;
+        $urlCode = $this->getUrlCodeByVideoId($videoId, $urlCodeId);
+        $urlCode->update($data);
+        return $urlCode;
     }
-    public function deleteUrlCode($videoId,$urlCodeId)
+    public function deleteUrlCode($videoId, $urlCodeId)
     {
         // Implementation for deleting a video URL code
-        $urlCode = $this->getUrlCodeByVideoId($videoId,$urlCodeId);
-        if ($urlCode) {
-            $urlCode->delete();
-            return true;
-        }
-        return false;
+        $urlCode = $this->getUrlCodeByVideoId($videoId, $urlCodeId);
+        $urlCode->delete();
+        return true;
     }
     public function getMaxUrlCodeNumberByVideoId($videoId)
     {

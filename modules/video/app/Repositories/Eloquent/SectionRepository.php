@@ -18,35 +18,26 @@ class SectionRepository implements SectionRepositoryInterface
     {
         return $this->section->all();
     }
-    public function getSectionByVideoId($videoId,$sectionId)
+    public function getSectionByVideoId($videoId, $sectionId)
     {
-        return $this->section->where('video_id', $videoId)->where('id', $sectionId)->first();
-
+        return $this->section->where('video_id', $videoId)->where('id', $sectionId)->firstOrFail();
     }
 
     public function createSection(array $data)
     {
         return $this->section->create($data);
     }
-    public function updateSection($videoId,$sectionId, array $data)
+    public function updateSection($videoId, $sectionId, array $data)
     {
-
-        $section = $this->getSectionByVideoId($videoId,$sectionId);
-
-        if ($section) {
-            $section->update($data);
-            return $section;
-        }
-        return null;
+        $section = $this->getSectionByVideoId($videoId, $sectionId);
+        $section->update($data);
+        return $section;
     }
-    public function deleteSection($videoId,$sectionId)
+    public function deleteSection($videoId, $sectionId)
     {
-        $section = $this->getSectionByVideoId($videoId,$sectionId);
-        if ($section) {
-            $section->delete();
-            return true;
-        }
-        return false;
+        $section = $this->getSectionByVideoId($videoId, $sectionId);
+        $section->delete();
+        return true;
     }
     //get section by video id
     public function getSectionsByVideoId($videoId)

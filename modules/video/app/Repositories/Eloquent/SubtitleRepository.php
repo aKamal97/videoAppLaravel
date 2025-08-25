@@ -23,7 +23,7 @@ class SubtitleRepository implements SubtitleRepositoryInterface
 
     public function getSubtitleById($id)
     {
-        return $this->subtitle->find($id);
+        return $this->subtitle->findOrFail($id);
     }
 
     public function createSubtitle(array $data)
@@ -43,35 +43,33 @@ class SubtitleRepository implements SubtitleRepositoryInterface
     {
         $isSubtitle = $this->subtitleBelongsToVideo($subtitleId, $videoId);
 
-        if ($isSubtitle) {
-            $subtitle = $this->getSubtitleById($subtitleId);
-            $subtitle->update($data);
-            return $subtitle;
+        if (!$isSubtitle) {
+            return null;
         }
 
-        return null;
+        $subtitle = $this->getSubtitleById($subtitleId);
+        $subtitle->update($data);
+        return $subtitle;
     }
 
     public function deleteSubtitle($subtitleId, $videoId)
     {
         $isSubtitle = $this->subtitleBelongsToVideo($subtitleId, $videoId);
 
-        if ($isSubtitle) {
-            $subtitle = $this->getSubtitleById($subtitleId);
-            $subtitle->delete();
-            return true;
+        if (!$isSubtitle) {
+            return false;
         }
-        return false;
+
+        $subtitle = $this->getSubtitleById($subtitleId);
+        $subtitle->delete();
+        return true;
     }
 
     public function getSubtitlesByVideoId($videoId)
     {
-        $video = app(VideoRepositoryInterface::class)->getById($videoId);
-
-        if (!$video) {
-            return null; 
-        }
-
+        // Let VideoRepository throw ModelNotFoundException if video not found
+        app(VideoRepositoryInterface::class)->getById($videoId);
+        
         return $this->subtitle->where('video_id', $videoId)->get();
     }
 

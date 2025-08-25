@@ -12,8 +12,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //
-        
+            $middleware->api(append:[
+                App\Http\Middleware\Localization::class,
+            ]);
+
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
