@@ -47,5 +47,7 @@
     "Authentication required": "المصادقة مطلوبة",
     "You are not authorized to perform this action": "غير مخول لك القيام بهذا الإجراء",
     "An error occurred": "حدث خطأ",
-    "Internal server error": "خطأ داخلي في الخادم"
+    "Internal server error": "خطأ داخلي في الخادم",
+
+    "Subtitle not found or does not belong to the given video": " لم يتم العثور على الترجمة أو أنها لا تنتمي إلى الفيديو المعطى"
 }

@@ -41,13 +41,13 @@ class QuizController extends Controller
     public function create($videoId , CreateVideoQuizRequest $request)
     {
         if (!is_numeric($videoId)) {
-            return $this->failuer(__('Video ID must be an integer'), 400);
+            return $this->failure(__('Video ID must be an integer'), 400);
         }
         try {
             // First validate video exists - this will throw ModelNotFoundException if video not found
             $this->videoService->getById($videoId);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return $this->failuer(__('Video not found'), 404);
+            return $this->failure(__('Video not found'), 404);
         }
         $data = $request->validated();
         $quizzes =[];
@@ -92,16 +92,16 @@ class QuizController extends Controller
     {
 
         if (!is_numeric($videoId)) {
-            return $this->failuer(__('Video ID must be an integer'), 400);
+            return $this->failure(__('Video ID must be an integer'), 400);
         }
         if (!is_numeric($quizId)) {
-            return $this->failuer(__('Quiz ID must be an integer'), 400);
+            return $this->failure(__('Quiz ID must be an integer'), 400);
         }
         try {
             // First validate video exists - this will throw ModelNotFoundException if video not found
             $this->videoService->getById($videoId);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return $this->failuer(__('Video not found'), 404);
+            return $this->failure(__('Video not found'), 404);
         }
         try {
             $quiz = $this->quizService->getQuizByVideoId($videoId, $quizId);
@@ -130,10 +130,10 @@ class QuizController extends Controller
     {
         $data = $request->validated();
       if (!is_numeric($videoId)) {
-            return $this->failuer(__('Video ID must be an integer'), 400);
+            return $this->failure(__('Video ID must be an integer'), 400);
         }
         if (!is_numeric($quizId)) {
-            return $this->failuer(__('Quiz ID must be an integer'), 400);
+            return $this->failure(__('Quiz ID must be an integer'), 400);
         }
 
 

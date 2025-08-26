@@ -40,13 +40,13 @@ class SubtitleController extends Controller
     public function create($videoId , CreateSubtitleRequest $request)
     {
         if (!is_numeric($videoId)) {
-            return $this->failuer(__('Video ID must be an integer'), 400);
+            return $this->failure(__('Video ID must be an integer'), 400);
         }
         try {
             // First validate video exists - this will throw ModelNotFoundException if video not found
             $this->videoService->getById($videoId);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return $this->failuer(__('Video not found'), 404);
+            return $this->failure(__('Video not found'), 404);
 
         }
         $data = $request->validated();
@@ -89,24 +89,24 @@ class SubtitleController extends Controller
     {
 
         if (!is_numeric($videoId)) {
-            return $this->failuer(__('Video ID must be an integer'), 400);
+            return $this->failure(__('Video ID must be an integer'), 400);
         }
         if (!is_numeric($subtitleId)) {
-            return $this->failuer(__('Subtitle ID must be an integer'), 400);
+            return $this->failure(__('Subtitle ID must be an integer'), 400);
         }
         try {
             // First validate video exists - this will throw ModelNotFoundException if video not found
             $this->videoService->getById($videoId);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return $this->failuer(__('Video not found'), 404);
+            return $this->failure(__('Video not found'), 404);
         }
         try {
             $subtitle = $this->subtitleService->getSubtitleByVideoId($videoId, $subtitleId);
             return $this->success(new SubtitleResource($subtitle), 200);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return $this->failuer(__('Subtitle not found'), 404);
+            return $this->failure(__('Subtitle not found'), 404);
         } catch (\Throwable $e) {
-            return $this->failuer($e->getMessage(), 500);
+            return $this->failure($e->getMessage(), 500);
         }
 
     }
@@ -131,7 +131,7 @@ class SubtitleController extends Controller
             $updated = $this->subtitleService->updateSubtitle($videoId, $subtitleId, $data);
 
             if (!$updated) {
-                return $this->failuer(__('Subtitle not found or does not belong to the given video'), 404);
+                return $this->failure(__('Subtitle not found or does not belong to the given video'), 404);
 
             }
 
@@ -139,7 +139,7 @@ class SubtitleController extends Controller
 
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
 
-            return $this->failuer(__('Subtitle not found'), 404);
+            return $this->failure(__('Subtitle not found'), 404);
 
         } catch (\Exception $e) {
             return $this->failure(__('An error occurred while updating subtitle: ') . $e->getMessage(), 500);
@@ -172,7 +172,7 @@ class SubtitleController extends Controller
 
             if ($subtitles === null) {
 
-                return $this->failuer(__('Video not found'), 404);
+                return $this->failure(__('Video not found'), 404);
             } 
             
             $deleted = $this->subtitleService->deleteSubtitle($videoId, $subtitleId);
