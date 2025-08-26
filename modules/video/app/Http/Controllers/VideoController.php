@@ -24,9 +24,9 @@ class VideoController extends Controller
     {
         $videos = $this->videoService->getAll();
         if ($videos->isEmpty()) {
-            return $this->success(__('No data found'),[], 404);
+            return $this->success([], __('No data found'), 404);
         }
-        return $this->success(data: VideoResource::collection($this->videoService->getAll()), statusCode: 200);
+        return $this->success(VideoResource::collection($this->videoService->getAll()));
     }
 
     /**
@@ -38,12 +38,12 @@ class VideoController extends Controller
         try {
             $video = $this->videoService->create($data);
             if (!$video) {
-                return $this->failuer(__('Video not created'), 400);
+                return $this->failure(__('Video not created'), 400);
             }
 
-            return $this->success(data: new VideoResource($video), statusCode: 201);
+            return $this->success(new VideoResource($video), '', 201);
         } catch (\Throwable $e) {
-            return $this->failuer($e->getMessage(), 500);
+            return $this->failure($e->getMessage(), 500);
         }
     }
 
@@ -53,12 +53,15 @@ class VideoController extends Controller
      */
     public function show($id)
     {
+        if (!is_numeric($id)) {
+            return $this->failure(__('Video ID must be an integer'), 400);
+        }
         try {
-            return $this->success(data: new VideoResource($this->videoService->getById($id)), statusCode: 200);
+            return $this->success(new VideoResource($this->videoService->getById($id)));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return $this->failuer(__('Video not found'), 404);
+            return $this->notFoundResponse(__('Video not found'));
         } catch (\Throwable $e) {
-            return $this->failuer($e->getMessage(), 500);
+            return $this->failure($e->getMessage(), 500);
         }
     }
 
@@ -69,14 +72,17 @@ class VideoController extends Controller
      */
     public function update(UpdateVideoRequest $request, $id)
     {
+        if (!is_numeric($id)) {
+            return $this->failure(__('Video ID must be an integer'), 400);
+        }
         $data = $request->validated();
         try {
             $video = $this->videoService->update($id, $data);
-            return $this->success(data: new VideoResource($video), statusCode: 200);
+            return $this->success(new VideoResource($video));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return $this->failuer(__('Video not found'), 404);
+            return $this->notFoundResponse(__('Video not found'));
         } catch (\Throwable $e) {
-            return $this->failuer($e->getMessage(), 500);
+            return $this->failure($e->getMessage(), 500);
         }
     }
 
@@ -85,13 +91,16 @@ class VideoController extends Controller
      */
     public function destroy($id)
     {
+        if (!is_numeric($id)) {
+            return $this->failure(__('Video ID must be an integer'), 400);
+        }
         try {
             $this->videoService->delete($id);
-            return $this->success(message: __('video deleted successfully'),  statusCode: 200);
+            return $this->success([], __('video deleted successfully'));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return $this->failuer(__('Video not found'), 404);
+            return $this->notFoundResponse(__('Video not found'));
         } catch (\Throwable $e) {
-            return $this->failuer($e->getMessage(), 500);
+            return $this->failure($e->getMessage(), 500);
         }
     }
 }

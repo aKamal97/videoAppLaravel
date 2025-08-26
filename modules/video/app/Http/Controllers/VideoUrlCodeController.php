@@ -24,12 +24,12 @@ class VideoUrlCodeController extends Controller
     public function index()
     {
         if (!$this->videoUrlCodeService) {
-            return $this->failuer(__('Service not available'), 500);
+            return $this->failure(__('Service not available'), 500);
         }
         if (!$this->videoUrlCodeService->getAllUrls() || $this->videoUrlCodeService->getAllUrls()->isEmpty()) {
-            return $this->success(__('No data found'), [], 404);
+            return $this->success([], __('No data found'), 404);
         }
-        return $this->success($this->videoUrlCodeService->getAllUrls(), 200);
+        return $this->success($this->videoUrlCodeService->getAllUrls());
     }
 
     /**
@@ -38,28 +38,30 @@ class VideoUrlCodeController extends Controller
     public function getUrlCodesByVideoId($videoId)
     {
         if (!is_numeric($videoId)) {
-            return $this->failuer(__('Video ID must be an integer'), 400);
+            return $this->failure(__('Video ID must be an integer'), 400);
         }
         if (!$this->videoUrlCodeService) {
-            return $this->failuer(__('Service not available'), 500);
+            return $this->failure(__('Service not available'), 500);
         }
-        
+
         try {
             // First validate video exists - this will throw ModelNotFoundException if video not found
             $this->videoService->getById($videoId);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return $this->failuer(__('Video not found'), 404);
+            return $this->notFoundResponse(__('Video not found'));
         }
-        
+
         try {
             $urlCodes = $this->videoUrlCodeService->getUrlCodesByVideoId($videoId);
             if ($urlCodes->isEmpty()) {
-                return $this->success(__('No data found'), [], 404);
+                return $this->success([], __('No data found'), 404);
             }
 
-            return $this->success(VideoUrlCodeResource::collection($urlCodes), 200);
+            return $this->success(VideoUrlCodeResource::collection($urlCodes));
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return $this->notFoundResponse(__('Video not found'));
         } catch (\Throwable $e) {
-            return $this->failuer($e->getMessage(), 500);
+            return $this->failure($e->getMessage(), 500);
         }
     }
     /**
@@ -68,19 +70,19 @@ class VideoUrlCodeController extends Controller
     public function store($videoId, CreateVideoUrlCodeRequest $request)
     {
         if (!is_numeric($videoId)) {
-            return $this->failuer(__('Video ID must be an integer'), 400);
+            return $this->failure(__('Video ID must be an integer'), 400);
         }
         if (!$this->videoUrlCodeService) {
-            return $this->failuer(__('Service not available'), 500);
+            return $this->failure(__('Service not available'), 500);
         }
-        
+
         try {
             // First validate video exists - this will throw ModelNotFoundException if video not found
             $this->videoService->getById($videoId);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return $this->failuer(__('Video not found'), 404);
+            return $this->notFoundResponse(__('Video not found'));
         }
-        
+
         try {
             $data = $request->validated();
             $urlCodes = [];
@@ -95,16 +97,18 @@ class VideoUrlCodeController extends Controller
                 }
                 $urlCode = $this->videoUrlCodeService->createUrlCode($videoId, $code);
                 if (!$urlCode) {
-                    return $this->failuer(__('Url code not created'), 400);
+                    return $this->failure(__('Url code not created'), 400);
                 } else {
                     array_push($urlCodes, $urlCode);
                 }
             }
 
 
-            return $this->success(data: VideoUrlCodeResource::collection($urlCodes), statusCode: 201);
+            return $this->success(VideoUrlCodeResource::collection($urlCodes), '', 201);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return $this->notFoundResponse(__('Video not found'));
         } catch (\Throwable $e) {
-            return $this->failuer($e->getMessage(), 500);
+            return $this->failure($e->getMessage(), 500);
         }
     }
 
@@ -114,30 +118,30 @@ class VideoUrlCodeController extends Controller
     public function update($videoId, $urlCodeId, UpdateVideoUrlCodeRequest $request)
     {
         if (!is_numeric($videoId)) {
-            return $this->failuer(__('Video ID must be an integer'), 400);
+            return $this->failure(__('Video ID must be an integer'), 400);
         }
         if (!is_numeric($urlCodeId)) {
-            return $this->failuer(__('Video-Url-Code ID must be an integer'), 400);
+            return $this->failure(__('Video-Url-Code ID must be an integer'), 400);
         }
         if (!$this->videoUrlCodeService) {
-            return $this->failuer(__('Service not available'), 500);
+            return $this->failure(__('Service not available'), 500);
         }
         try {
             // First validate video exists - this will throw ModelNotFoundException if video not found
             $this->videoService->getById($videoId);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return $this->failuer(__('Video not found'), 404);
+            return $this->notFoundResponse(__('Video not found'));
         }
-        
+
         try {
             // Now try to update URL code - this will throw ModelNotFoundException if URL code not found
             $data = $request->validated();
             $updatedUrlCode = $this->videoUrlCodeService->updateUrlCode($videoId, $urlCodeId, $data);
-            return $this->success(message: __("Url Code Updated Successfully!"), data: new  VideoUrlCodeResource($updatedUrlCode), statusCode: 200);
+            return $this->success(new VideoUrlCodeResource($updatedUrlCode), __("Url Code Updated Successfully!"));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return $this->failuer(__('Url code not exist'), 404);
+            return $this->notFoundResponse(__('Url code not exist'));
         } catch (\Throwable $e) {
-            return $this->failuer($e->getMessage(), 500);
+            return $this->failure($e->getMessage(), 500);
         }
     }
 
@@ -147,34 +151,28 @@ class VideoUrlCodeController extends Controller
     public function destroy($videoId, $urlCodeId)
     {
         if (!is_numeric($videoId)) {
-            return $this->failuer(__('Video ID must be an integer'), 400);
+            return $this->failure(__('Video ID must be an integer'), 400);
         }
         if (!is_numeric($urlCodeId)) {
-            return $this->failuer(__('Video-Url-Code ID must be an integer'), 400);
-        }
-        if (!is_numeric($videoId)) {
-            return $this->failuer(__('Video ID must be an integer'), 400);
-        }
-        if (!is_numeric($urlCodeId)) {
-            return $this->failuer(__('Video-Url-Code ID must be an integer'), 400);
+            return $this->failure(__('Video-Url-Code ID must be an integer'), 400);
         }
         if (!$this->videoUrlCodeService) {
-            return $this->failuer(__('Service not available'), 500);
+            return $this->failure(__('Service not available'), 500);
         }
         try {
             // First validate video exists - this will throw ModelNotFoundException if video not found
             $this->videoService->getById($videoId);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return $this->failuer(__('Video not found'), 404);
+            return $this->notFoundResponse(__('Video not found'));
         }
-        
+
         try {
             $this->videoUrlCodeService->deleteUrlCode($videoId, $urlCodeId);
-            return $this->success(message: __("Url Code Deleted Successfully!"), statusCode: 200);
+            return $this->success([], __("Url Code Deleted Successfully!"));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return $this->failuer(__('Url code not exist'), 404);
+            return $this->notFoundResponse(__('Url code not exist'));
         } catch (\Throwable $e) {
-            return $this->failuer($e->getMessage(), 500);
+            return $this->failure($e->getMessage(), 500);
         }
     }
 
@@ -184,28 +182,28 @@ class VideoUrlCodeController extends Controller
     public function show($videoId, $urlCodeId)
     {
         if (!is_numeric($videoId)) {
-            return $this->failuer(__('Video ID must be an integer'), 400);
+            return $this->failure(__('Video ID must be an integer'), 400);
         }
         if (!is_numeric($urlCodeId)) {
-            return $this->failuer(__('Video-Url-Code ID must be an integer'), 400);
+            return $this->failure(__('Video-Url-Code ID must be an integer'), 400);
         }
         if (!$this->videoUrlCodeService) {
-            return $this->failuer(__('Service not available'), 500);
+            return $this->failure(__('Service not available'), 500);
         }
         try {
             // First validate video exists - this will throw ModelNotFoundException if video not found
             $this->videoService->getById($videoId);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return $this->failuer(__('Video not found'), 404);
+            return $this->notFoundResponse(__('Video not found'));
         }
-        
+
         try {
             $urlCode = $this->videoUrlCodeService->getUrlCodeByVideoId($videoId, $urlCodeId);
-            return $this->success(data: new VideoUrlCodeResource($urlCode), statusCode: 200);
+            return $this->success(new VideoUrlCodeResource($urlCode));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return $this->failuer(__('Url code not exist'), 404);
+            return $this->notFoundResponse(__('Url code not exist'));
         } catch (\Throwable $e) {
-            return $this->failuer($e->getMessage(), 500);
+            return $this->failure($e->getMessage(), 500);
         }
     }
 }

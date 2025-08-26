@@ -35,5 +35,17 @@
     "section updated successfully": " تم تحديث القسم بنجاح",
     "section deleted successfully": " تم حذف القسم بنجاح",
     "Quiz deleted successfully": " تم حذف السؤال بنجاح",
-    "Subtitle deleted successfully": " تم حذف الترجمة بنجاح"
+    "Subtitle deleted successfully": " تم حذف الترجمة بنجاح",
+    "Quiz ID must be an integer":" معرف السؤال يجب أن يكون رقم صحيح",
+    "Subtitle ID must be an integer":" معرف الترجمة يجب أن يكون رقم صحيح",
+    "HTTP method :method is not allowed. Allowed methods: :methods": "طريقة HTTP :method غير مسموحة. الطرق المسموحة: :methods",
+    "HTTP method :method is not allowed for this route": "طريقة HTTP :method غير مسموحة لهذا المسار",
+    "Route not found or method not allowed.": "المسار غير موجود أو الطريقة غير مسموحة",
+    "Endpoint not found": "نقطة النهاية غير موجودة",
+    "Validation failed": "فشل التحقق من صحة البيانات",
+    "Resource not found": "المورد غير موجود",
+    "Authentication required": "المصادقة مطلوبة",
+    "You are not authorized to perform this action": "غير مخول لك القيام بهذا الإجراء",
+    "An error occurred": "حدث خطأ",
+    "Internal server error": "خطأ داخلي في الخادم"
 }

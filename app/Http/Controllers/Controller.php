@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-use App\Trait\JsonResponse;
+use App\Traits\JsonResponse;
 abstract class Controller
 {
     use JsonResponse;
