@@ -23,7 +23,6 @@ class UpdateVideoQuizRequest extends FormRequest
         'answer3'      => 'sometimes|string|max:191|nullable',
         'answer4'      => 'sometimes|string|max:191|nullable',
         'answer5'      => 'sometimes|string|max:191|nullable',
-        'video_id'     => 'required|exists:videos,id',
     ];
 }
 

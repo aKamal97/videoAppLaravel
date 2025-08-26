@@ -15,7 +15,6 @@ class UpdateSubtitleRequest extends FormRequest
             'start'             => 'sometimes|integer|min:0',
             'end'               => 'sometimes|integer|gt:start',
             'text'              => 'sometimes|string|max:191',
-            'video_id'          => 'required|exists:videos,id',
         ];
     }
 
