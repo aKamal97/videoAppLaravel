@@ -19,9 +19,9 @@ class QuizRepository implements QuizRepositoryInterface
         return $this->quiz->all();
     }
 
-    public function getQuizById($id)
+    public function getQuizByVideoId($videoId, $quizId)
     {
-        return $this->quiz->findOrFail($id);
+        return $this->quiz->where('video_id', $videoId)->where('id', $quizId)->firstOrFail();
     }
 
     public function createQuiz(array $data)
@@ -37,7 +37,7 @@ class QuizRepository implements QuizRepositoryInterface
             ->exists();
     }
 
-    public function updateQuiz($quizId, $videoId, array $data)
+    public function updateQuiz($videoId, $quizId, array $data)
     {
         $isQuiz = $this->quizBelongsToVideo($quizId, $videoId);
 
@@ -45,12 +45,12 @@ class QuizRepository implements QuizRepositoryInterface
             return null;
         }
 
-        $quiz = $this->getQuizById($quizId);
+        $quiz = $this->getQuizByVideoId($videoId, $quizId);
         $quiz->update($data);
         return $quiz;
     }
 
-    public function deleteQuiz($quizId, $videoId)
+    public function deleteQuiz($videoId, $quizId)
     {
         $isQuiz = $this->quizBelongsToVideo($quizId, $videoId);
 
@@ -58,7 +58,7 @@ class QuizRepository implements QuizRepositoryInterface
             return false;
         }
 
-        $quiz = $this->getQuizById($quizId);
+        $quiz = $this->getQuizByVideoId($videoId, $quizId);
         $quiz->delete();
         return true;
     }

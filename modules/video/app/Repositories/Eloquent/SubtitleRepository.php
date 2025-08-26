@@ -21,9 +21,9 @@ class SubtitleRepository implements SubtitleRepositoryInterface
         return $this->subtitle->all();
     }
 
-    public function getSubtitleById($id)
+    public function getSubtitleByVideoId($videoId,$subtitleId)
     {
-        return $this->subtitle->findOrFail($id);
+        return $this->subtitle->where('video_id', $videoId)->where('id', $subtitleId)->firstOrFail();
     }
 
     public function createSubtitle(array $data)
@@ -39,7 +39,7 @@ class SubtitleRepository implements SubtitleRepositoryInterface
             ->exists();
     }
 
-    public function updateSubtitle($subtitleId, $videoId, array $data)
+    public function updateSubtitle($videoId, $subtitleId, array $data)
     {
         $isSubtitle = $this->subtitleBelongsToVideo($subtitleId, $videoId);
 
@@ -47,12 +47,12 @@ class SubtitleRepository implements SubtitleRepositoryInterface
             return null;
         }
 
-        $subtitle = $this->getSubtitleById($subtitleId);
+        $subtitle = $this->getSubtitleByVideoId($videoId,$subtitleId);
         $subtitle->update($data);
         return $subtitle;
     }
 
-    public function deleteSubtitle($subtitleId, $videoId)
+    public function deleteSubtitle($videoId, $subtitleId)
     {
         $isSubtitle = $this->subtitleBelongsToVideo($subtitleId, $videoId);
 
@@ -60,7 +60,7 @@ class SubtitleRepository implements SubtitleRepositoryInterface
             return false;
         }
 
-        $subtitle = $this->getSubtitleById($subtitleId);
+        $subtitle = $this->getSubtitleByVideoId($videoId,$subtitleId);
         $subtitle->delete();
         return true;
     }

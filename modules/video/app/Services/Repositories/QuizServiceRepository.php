@@ -18,9 +18,9 @@ class QuizServiceRepository implements QuizServiceInterface
         return $this->quizRepository->getAllQuizzes();
     }
 
-    public function getQuizById($id)
+    public function getQuizByVideoId($videoId,$quizId)
     {
-        return $this->quizRepository->getQuizById($id);
+        return $this->quizRepository->getQuizByVideoId($videoId,$quizId);
     }
 
     public function createQuiz($videoId, array $data)
@@ -34,14 +34,14 @@ class QuizServiceRepository implements QuizServiceInterface
         return $this->quizRepository->quizBelongsToVideo($quizId, $videoId);
     }
 
-    public function updateQuiz($quizId, $videoId, array $data)
+    public function updateQuiz($videoId, $quizId, array $data)
     {
-        return $this->quizRepository->updateQuiz($quizId, $videoId, $data);
+        return $this->quizRepository->updateQuiz($videoId, $quizId, $data);
     }
 
-    public function deleteQuiz($quizId, $videoId)
+    public function deleteQuiz($videoId, $quizId)
     {
-        return $this->quizRepository->deleteQuiz($quizId, $videoId);
+        return $this->quizRepository->deleteQuiz($videoId, $quizId);
     }
 
 

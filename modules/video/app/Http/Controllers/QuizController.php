@@ -40,6 +40,15 @@ class QuizController extends Controller
      */
     public function create($videoId , CreateVideoQuizRequest $request)
     {
+        if (!is_numeric($videoId)) {
+            return $this->failuer(__('Video ID must be an integer'), 400);
+        }
+        try {
+            // First validate video exists - this will throw ModelNotFoundException if video not found
+            $this->videoService->getById($videoId);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return $this->failuer(__('Video not found'), 404);
+        }
         $data = $request->validated();
         $quizzes =[];
         if (!is_numeric($videoId)) {
@@ -79,14 +88,25 @@ class QuizController extends Controller
     /**
      * Show a quiz.
      */
-    public function show($id)
+    public function show($videoId, $quizId)
     {
-            if (!is_numeric($id)) {
-                return $this->failure(__('Quiz ID must be an integer'), 400);
-            }
+
+        if (!is_numeric($videoId)) {
+            return $this->failuer(__('Video ID must be an integer'), 400);
+        }
+        if (!is_numeric($quizId)) {
+            return $this->failuer(__('Quiz ID must be an integer'), 400);
+        }
         try {
-            $quiz = $this->quizService->getQuizById($id);
-            return $this->success(new QuizResource($quiz));
+            // First validate video exists - this will throw ModelNotFoundException if video not found
+            $this->videoService->getById($videoId);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return $this->failuer(__('Video not found'), 404);
+        }
+        try {
+            $quiz = $this->quizService->getQuizByVideoId($videoId, $quizId);
+            return $this->success(new QuizResource($quiz), 200);
+
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return $this->notFoundResponse(__('Quiz not found'));
         } catch (\Throwable $e) {
@@ -106,16 +126,19 @@ class QuizController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateVideoQuizRequest $request, $id)
+    public function update($videoId, $quizId, UpdateVideoQuizRequest $request)
     {
         $data = $request->validated();
-        $videoId = $data['video_id'];
-            if (!is_numeric($id)) {
-                return $this->failure(__('Quiz ID must be an integer'), 400);
-            }
+      if (!is_numeric($videoId)) {
+            return $this->failuer(__('Video ID must be an integer'), 400);
+        }
+        if (!is_numeric($quizId)) {
+            return $this->failuer(__('Quiz ID must be an integer'), 400);
+        }
+
 
         try {
-            $updated = $this->quizService->updateQuiz($id, $videoId, $data);
+            $updated = $this->quizService->updateQuiz($videoId, $quizId, $data);
 
             if (!$updated) {
                 return $this->notFoundResponse(__('Quiz not found or does not belong to the given video'));
@@ -133,7 +156,7 @@ class QuizController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($quizId, $videoId)
+    public function destroy($videoId, $quizId)
     {
          if (!is_numeric($videoId)) {
             return $this->failure(__('Video ID must be an integer'), 400);
@@ -142,7 +165,7 @@ class QuizController extends Controller
             return $this->failure(__('Quiz ID must be an integer'), 400);
         }
         try {
-            $quiz = $this->quizService->getQuizById($quizId);
+            $quiz = $this->quizService->getQuizByVideoId($videoId, $quizId);
 
             if (!$quiz) {
                 return $this->notFoundResponse(__('Quiz not found'));
