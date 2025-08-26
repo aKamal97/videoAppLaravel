@@ -25,6 +25,20 @@ class Video extends Model
     {
         return $this->hasMany(VideoSection::class);
     }
+    public function subtitles()
+    {
+        return $this->hasMany(VideoSubtitles::class);
+    }
+    public function videoQuizzes()
+    {
+        return $this->hasMany(VideoQuiz::class);
+    }
+    public function videoUrlCodes()
+    {
+        return $this->hasMany(VideoUrlCode::class);
+    }
+    
+
     // protected static function newFactory(): VideoFactory
     // {
     //     // return VideoFactory::new();

@@ -23,6 +23,10 @@ class VideoUrlCode extends Model
         'isembedcode'
     ];
 
+    public function video()
+    {
+        return $this->belongsTo(Video::class);
+    }
     // protected static function newFactory(): VideoUrlCodeFactory
     // {
     //     // return VideoUrlCodeFactory::new();
