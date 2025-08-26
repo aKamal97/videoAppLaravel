@@ -29,10 +29,10 @@ class QuizController extends Controller
     {
         $quizzes = $this->quizService->getAllQuizzes();
         if($quizzes->isEmpty()) {
-            return $this->success([], 404);
+            return $this->success([], __('No data found'), 404);
         }
 
-        return $this->success(QuizResource::collection($quizzes), 200);
+        return $this->success(QuizResource::collection($quizzes));
     }
 
     /**
@@ -42,6 +42,9 @@ class QuizController extends Controller
     {
         $data = $request->validated();
         $quizzes =[];
+        if (!is_numeric($videoId)) {
+            return $this->failure(__('Video ID must be an integer'), 400);
+        }
         try{
             foreach($data['quizzes'] as $quizData ){
                 $isVideoHasQuizzes = $this->quizService->getQuizzesByVideoId($videoId);
@@ -53,16 +56,18 @@ class QuizController extends Controller
                     }
                 $quiz = $this->quizService->createQuiz($videoId, $quizData);
                 if(!$quiz) {
-                    return $this->failuer(__('Quiz not created'), 400);
+                    return $this->failure(__('Quiz not created'), 400);
                 }
                 else
                 {
                     array_push($quizzes, $quiz);
                 }
             }
-            return $this->success(QuizResource::collection(collect($quizzes)), 201);
+            return $this->success(QuizResource::collection(collect($quizzes)), '', 201);
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return $this->notFoundResponse(__('Video not found'));
         } catch (\Exception $e) {
-            return $this->failuer(__('An error occurred while creating quizzes: ') . $e->getMessage(), 500);
+            return $this->failure(__('An error occurred while creating quizzes: ') . $e->getMessage(), 500);
         }
     }
 
@@ -76,13 +81,16 @@ class QuizController extends Controller
      */
     public function show($id)
     {
+            if (!is_numeric($id)) {
+                return $this->failure(__('Quiz ID must be an integer'), 400);
+            }
         try {
             $quiz = $this->quizService->getQuizById($id);
-            return $this->success(new QuizResource($quiz), 200);
+            return $this->success(new QuizResource($quiz));
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return $this->failuer(__('Quiz not found'), 404);
+            return $this->notFoundResponse(__('Quiz not found'));
         } catch (\Throwable $e) {
-            return $this->failuer($e->getMessage(), 500);
+            return $this->failure($e->getMessage(), 500);
         }
     }
 
@@ -102,20 +110,23 @@ class QuizController extends Controller
     {
         $data = $request->validated();
         $videoId = $data['video_id'];
+            if (!is_numeric($id)) {
+                return $this->failure(__('Quiz ID must be an integer'), 400);
+            }
 
         try {
             $updated = $this->quizService->updateQuiz($id, $videoId, $data);
 
             if (!$updated) {
-                return $this->failuer(__('Quiz not found or does not belong to the given video'), 404);
+                return $this->notFoundResponse(__('Quiz not found or does not belong to the given video'));
             }
 
-            return $this->success(new QuizResource($updated), 200);
+            return $this->success(new QuizResource($updated));
 
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return $this->failuer(__('Quiz not found'), 404);
+            return $this->notFoundResponse(__('Quiz not found'));
         } catch (\Exception $e) {
-            return $this->failuer(__('An error occurred while updating quiz: ') . $e->getMessage(), 500);
+            return $this->failure(__('An error occurred while updating quiz: ') . $e->getMessage(), 500);
         }
     }
 
@@ -124,29 +135,37 @@ class QuizController extends Controller
      */
     public function destroy($quizId, $videoId)
     {
+         if (!is_numeric($videoId)) {
+            return $this->failure(__('Video ID must be an integer'), 400);
+        }
+        if (!is_numeric($quizId)) {
+            return $this->failure(__('Quiz ID must be an integer'), 400);
+        }
         try {
             $quiz = $this->quizService->getQuizById($quizId);
 
             if (!$quiz) {
-                return $this->failuer(__('Quiz not found'), 404);
+                return $this->notFoundResponse(__('Quiz not found'));
             }
 
             $quizzes = $this->quizService->getQuizzesByVideoId($videoId);
 
             if ($quizzes === null) {
-                return $this->failuer(__('Video not found'), 404);
+                return $this->notFoundResponse(__('Video not found'));
             }
 
             $deleted = $this->quizService->deleteQuiz($quizId, $videoId);
 
             if (!$deleted) {
-                return $this->failuer(__('Quiz does not belong to the given video'), 400);
+                return $this->failure(__('Quiz does not belong to the given video'), 400);
             }
 
-            return $this->success(__('Quiz deleted successfully'), 200);
+            return $this->success([], __('Quiz deleted successfully'));
 
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return $this->notFoundResponse(__('Quiz not found'));
         } catch (\Exception $e) {
-            return $this->failuer(__('An error occurred while deleting quiz: ') . $e->getMessage(), 500);
+            return $this->failure(__('An error occurred while deleting quiz: ') . $e->getMessage(), 500);
         }
     }
 
@@ -159,9 +178,9 @@ class QuizController extends Controller
             // First validate video exists - this will throw ModelNotFoundException if video not found
             $this->videoService->getById($videoId);
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return $this->failuer(__('Video not found'), 404);
+            return $this->notFoundResponse(__('Video not found'));
         }
-        
+
         try {
             $quizzes = $this->quizService->getQuizzesByVideoId($videoId);
 
@@ -169,9 +188,9 @@ class QuizController extends Controller
                 return $this->success([], __('No quizzes found for video ') . $videoId, 404);
             }
 
-            return $this->success(QuizResource::collection($quizzes), 200);
+            return $this->success(QuizResource::collection($quizzes));
         } catch (\Throwable $e) {
-            return $this->failuer($e->getMessage(), 500);
+            return $this->failure($e->getMessage(), 500);
         }
     }
 
